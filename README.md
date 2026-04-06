@@ -2,6 +2,8 @@
 
 A modern React frontend application for data analytics and visualization, featuring a responsive dashboard interface.
 
+![preview](./public/preview.png)
+
 ## 🚀 Technologies
 
 - [React](https://react.dev/) - A JavaScript library for building user interfaces
