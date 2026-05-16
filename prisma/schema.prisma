@@ -1,12 +1,9 @@
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["driverAdapters"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
-  // url is required by prisma generate; actual connections use the adapter in prisma.config.ts
-  url      = env("DATABASE_URL")
 }
 
 enum Status {
@@ -27,7 +24,7 @@ model User {
   email         String    @unique
   emailVerified DateTime?
   image         String?
-  password      String?   // null for OAuth users (Google)
+  password      String? // null for OAuth users (Google)
   createdAt     DateTime  @default(now())
 
   accounts Account[]

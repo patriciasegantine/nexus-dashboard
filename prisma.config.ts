@@ -1,20 +1,14 @@
 import path from "node:path";
 import { defineConfig } from "prisma/config";
-import { PrismaPg } from "@prisma/adapter-pg";
 import { config as loadEnv } from "dotenv";
 
-// When prisma.config.ts is present, Prisma stops auto-loading .env
 loadEnv({ path: path.resolve(__dirname, ".env") });
 
+// In Prisma 7, prisma.config.ts only handles CLI config (schema path, migrations URL).
+// The adapter (PrismaPg) is passed directly to the PrismaClient constructor in src/lib/db.ts.
 export default defineConfig({
   schema: path.join("prisma", "schema.prisma"),
-  experimental: {
-    adapter: true,
-  },
-  adapter: () => {
-    const adapter = new PrismaPg({
-      connectionString: process.env.DATABASE_URL!,
-    });
-    return Promise.resolve(adapter);
+  datasource: {
+    url: process.env.DATABASE_URL!,
   },
 });
