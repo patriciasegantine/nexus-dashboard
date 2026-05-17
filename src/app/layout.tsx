@@ -1,12 +1,13 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import React from "react";
-import { Toaster } from "@/components/ui/toaster";
-import { QueryProvider } from "@/providers/query-provider";
+import React from "react"
+import { Toaster } from "@/components/ui/toaster"
+import { QueryProvider } from "@/providers/query-provider"
+import { AuthProvider } from "@/providers/auth-provider"
 import { ThemeProvider } from '@/components/theme/theme-provider'
-import { AppProvider } from "@/contexts/app-context";
-import { Header } from "@/components/header";
+import { AppProvider } from "@/contexts/app-context"
+import { Header } from "@/components/header"
 
 const inter = Inter({subsets: ['latin']})
 
@@ -37,15 +38,17 @@ export default function RootLayout({
       enableSystem
       disableTransitionOnChange
     >
-      <QueryProvider>
-        <AppProvider>
-          <Header/>
-          <main className="pt-14">
-            {children}
-          </main>
-        </AppProvider>
-        <Toaster/>
-      </QueryProvider>
+      <AuthProvider>
+        <QueryProvider>
+          <AppProvider>
+            <Header/>
+            <main className="pt-14">
+              {children}
+            </main>
+          </AppProvider>
+          <Toaster/>
+        </QueryProvider>
+      </AuthProvider>
     </ThemeProvider>
     </body>
     </html>
