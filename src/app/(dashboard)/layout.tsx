@@ -1,37 +1,28 @@
 'use client'
 
-import { ProtectedRoute } from '@/components/auth/protected-route'
 import { useApp } from '@/contexts/app-context'
 import { cn } from '@/lib/utils'
-import { Sidebar } from "@/components/sidebar/sidebar";
-import React from "react";
+import { Sidebar } from "@/components/sidebar/sidebar"
+import React from "react"
 
-export default function DashboardLayout({
-                                          children,
-                                        }: {
-  children: React.ReactNode
-}) {
-  const {isCollapsed} = useApp()
-  
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const { isCollapsed } = useApp()
+
   return (
-    <ProtectedRoute>
-      <div className="min-h-screen bg-background mt-8">
-        <div className="flex">
-          <Sidebar/>
-          <main
-            className={cn(
-              "flex-1 transition-all duration-300 ease-in-out",
-              isCollapsed
-                ? "ml-[70px] w-[calc(100%-70px)]"
-                : "ml-64 w-[calc(100%-256px)]"
-            )}
-          >
-            <div className="container mx-auto p-6">
-              {children}
-            </div>
-          </main>
-        </div>
+    <div className="min-h-screen bg-background mt-8">
+      <div className="flex">
+        <Sidebar />
+        <main
+          className={cn(
+            "flex-1 transition-all duration-300 ease-in-out",
+            isCollapsed
+              ? "ml-[70px] w-[calc(100%-70px)]"
+              : "ml-64 w-[calc(100%-256px)]"
+          )}
+        >
+          <div className="container mx-auto p-6">{children}</div>
+        </main>
       </div>
-    </ProtectedRoute>
+    </div>
   )
 }
