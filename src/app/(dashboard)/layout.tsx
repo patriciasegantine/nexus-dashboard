@@ -3,6 +3,7 @@
 import { useApp } from '@/contexts/app-context'
 import { cn } from '@/lib/utils'
 import { Sidebar } from "@/components/sidebar/sidebar"
+import { WelcomeModal } from "@/components/welcome/welcome-modal"
 import React from "react"
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -10,6 +11,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="min-h-screen bg-background mt-8">
+      <WelcomeModal />
       <div className="flex">
         <Sidebar />
         <main
