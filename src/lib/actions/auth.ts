@@ -6,6 +6,7 @@ import { db } from "@/lib/db"
 import { signIn } from "@/auth"
 import { AUTH_MESSAGES } from "@/constants/messagens"
 import { loginSchema, registerSchema } from "@/validations/auth"
+import { sendWelcomeEmail } from "@/lib/email"
 
 export type RegisterState = {
   success: boolean
@@ -77,5 +78,19 @@ export async function registerUser(
     data: { name, email, password: hashedPassword },
   })
 
-  return { success: true, redirectTo: "/login?registered=1" }
+  await sendWelcomeEmail({ name, email })
+
+  try {
+    await signIn("credentials", {
+      email,
+      password,
+      redirectTo: "/?welcome=1",
+    })
+    return { success: true, redirectTo: "/?welcome=1" }
+  } catch (error) {
+    if (error instanceof AuthError) {
+      return { success: false, error: AUTH_MESSAGES.INVALID_CREDENTIALS }
+    }
+    throw error
+  }
 }
