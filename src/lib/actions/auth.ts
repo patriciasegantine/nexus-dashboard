@@ -10,6 +10,7 @@ import { loginSchema, registerSchema } from "@/validations/auth"
 export type RegisterState = {
   success: boolean
   error?: string
+  redirectTo?: string
 }
 
 export type LoginState = {
@@ -76,15 +77,5 @@ export async function registerUser(
     data: { name, email, password: hashedPassword },
   })
 
-  // Auto sign-in after registration
-  try {
-    await signIn("credentials", { email, password, redirectTo: "/" })
-  } catch (error) {
-    if (error instanceof AuthError) {
-      return { success: false, error: AUTH_MESSAGES.INVALID_CREDENTIALS }
-    }
-    throw error
-  }
-
-  return { success: true }
+  return { success: true, redirectTo: "/login?registered=1" }
 }
