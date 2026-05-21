@@ -5,8 +5,11 @@ import React, { createContext, useContext, useEffect, useState } from 'react'
 interface AppContextType {
   theme: 'light' | 'dark' | 'system'
   isCollapsed: boolean
+  isMobileSidebarOpen: boolean
   setTheme: (theme: 'light' | 'dark' | 'system') => void
   toggleSidebar: () => void
+  toggleMobileSidebar: () => void
+  closeMobileSidebar: () => void
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined)
@@ -25,6 +28,8 @@ export function AppProvider({children}: { children: React.ReactNode }) {
     }
     return false
   })
+
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
   
   useEffect(() => {
     localStorage.setItem('theme', theme)
@@ -33,11 +38,31 @@ export function AppProvider({children}: { children: React.ReactNode }) {
   useEffect(() => {
     localStorage.setItem('sidebarCollapsed', String(isCollapsed))
   }, [isCollapsed])
+
+  useEffect(() => {
+    if (!isMobileSidebarOpen) return
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [isMobileSidebarOpen])
   
   const toggleSidebar = () => setIsCollapsed(prev => !prev)
+  const toggleMobileSidebar = () => setIsMobileSidebarOpen(prev => !prev)
+  const closeMobileSidebar = () => setIsMobileSidebarOpen(false)
   
   return (
-    <AppContext.Provider value={{theme, isCollapsed, setTheme, toggleSidebar}}>
+    <AppContext.Provider
+      value={{
+        theme,
+        isCollapsed,
+        isMobileSidebarOpen,
+        setTheme,
+        toggleSidebar,
+        toggleMobileSidebar,
+        closeMobileSidebar
+      }}
+    >
       {children}
     </AppContext.Provider>
   )

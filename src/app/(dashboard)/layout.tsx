@@ -16,11 +16,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           className={cn(
             "flex-1 transition-all duration-300 ease-in-out",
             isCollapsed
-              ? "ml-[70px] w-[calc(100%-70px)]"
-              : "ml-64 w-[calc(100%-256px)]"
+              ? "md:ml-[70px]"
+              : "md:ml-64"
           )}
         >
-          <div className="container mx-auto p-6">{children}</div>
+          <div className="container mx-auto p-4 md:p-6">{children}</div>
         </main>
       </div>
     </div>

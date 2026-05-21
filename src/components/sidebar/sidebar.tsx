@@ -46,34 +46,61 @@ const SIDEBAR_ITEMS = [
 
 export function Sidebar() {
   const pathname = usePathname()
-  const {isCollapsed, toggleSidebar} = useApp()
+  const {isCollapsed, isMobileSidebarOpen, toggleSidebar, closeMobileSidebar} = useApp()
   
   const sidebarWidth = isCollapsed ? SIDEBAR_CONFIG.COLLAPSED_WIDTH : SIDEBAR_CONFIG.EXPANDED_WIDTH
   
   return (
-    <div className={cn(
-      `fixed ${SIDEBAR_CONFIG.TOP_OFFSET} left-0 ${SIDEBAR_CONFIG.HEIGHT} border-r bg-background`,
-      "transition-all duration-300 ease-in-out flex flex-col",
-      sidebarWidth
-    )}>
-      <NavigationSection
-        pathname={pathname}
-        isCollapsed={isCollapsed}
+    <>
+      <button
+        type="button"
+        className={cn(
+          "fixed inset-0 top-16 z-30 bg-black/40 backdrop-blur-[1px] md:hidden",
+          "transition-opacity duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
+          isMobileSidebarOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        )}
+        onClick={closeMobileSidebar}
+        aria-label="Close sidebar"
       />
-      <CollapseToggleSection
-        isCollapsed={isCollapsed}
-        onToggle={toggleSidebar}
-      />
-    </div>
+
+      <div className={cn(
+        `fixed ${SIDEBAR_CONFIG.TOP_OFFSET} left-0 ${SIDEBAR_CONFIG.HEIGHT} border-r bg-background z-40`,
+        "w-64 md:hidden overflow-hidden will-change-transform",
+        "transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
+        isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full"
+      )}>
+        <NavigationSection
+          pathname={pathname}
+          isCollapsed={false}
+          onItemSelect={closeMobileSidebar}
+        />
+      </div>
+
+      <div className={cn(
+        `fixed ${SIDEBAR_CONFIG.TOP_OFFSET} left-0 ${SIDEBAR_CONFIG.HEIGHT} border-r bg-background`,
+        "transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] md:flex flex-col hidden overflow-hidden",
+        sidebarWidth
+      )}>
+        <NavigationSection
+          pathname={pathname}
+          isCollapsed={isCollapsed}
+        />
+        <CollapseToggleSection
+          isCollapsed={isCollapsed}
+          onToggle={toggleSidebar}
+        />
+      </div>
+    </>
   )
 }
 
 interface NavigationSectionProps {
   pathname: string
   isCollapsed: boolean
+  onItemSelect?: () => void
 }
 
-function NavigationSection({pathname, isCollapsed}: NavigationSectionProps) {
+function NavigationSection({pathname, isCollapsed, onItemSelect}: NavigationSectionProps) {
   return (
     <div className="flex-1 space-y-4 py-4">
       <div className="px-3 py-2">
@@ -84,6 +111,7 @@ function NavigationSection({pathname, isCollapsed}: NavigationSectionProps) {
               item={item}
               isActive={pathname === item.href}
               isCollapsed={isCollapsed}
+              onItemSelect={onItemSelect}
             />
           ))}
         </nav>
@@ -96,28 +124,38 @@ interface NavigationItemProps {
   item: typeof SIDEBAR_ITEMS[number]
   isActive: boolean
   isCollapsed: boolean
+  onItemSelect?: () => void
 }
 
-function NavigationItem({item, isActive, isCollapsed}: NavigationItemProps) {
+function NavigationItem({item, isActive, isCollapsed, onItemSelect}: NavigationItemProps) {
   const IconComponent = item.icon
   
   return (
     <TooltipProvider delayDuration={0}>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Link href={item.href}>
-            <Button
-              variant={isActive ? "secondary" : "ghost"}
-              className={cn(
-                "w-full justify-start",
-                isActive && "bg-muted",
-                isCollapsed && "justify-center px-2"
-              )}
-            >
+          <Button
+            asChild
+            variant={isActive ? "secondary" : "ghost"}
+            className={cn(
+              "w-full justify-start overflow-hidden transition-all duration-200",
+              "hover:translate-x-0.5 hover:bg-muted/80",
+              isActive && "bg-muted",
+              isCollapsed && "justify-center px-2"
+            )}
+          >
+            <Link href={item.href} onClick={onItemSelect}>
               <IconComponent className={cn("h-4 w-4", !isCollapsed && "mr-2")}/>
-              {!isCollapsed && <span>{item.title}</span>}
-            </Button>
-          </Link>
+              <span
+                className={cn(
+                  "truncate whitespace-nowrap transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                  isCollapsed ? "max-w-0 opacity-0 translate-x-1" : "max-w-[140px] opacity-100 translate-x-0"
+                )}
+              >
+                {item.title}
+              </span>
+            </Link>
+          </Button>
         </TooltipTrigger>
         {isCollapsed && (
           <TooltipContent side="right" className="pointer-events-none">
@@ -145,13 +183,20 @@ function CollapseToggleSection({isCollapsed, onToggle}: CollapseToggleSectionPro
             <Button
               variant="ghost"
               size="sm"
-              className="w-full flex items-center justify-center transition-all duration-300 ease-in-out"
+              className="w-full flex items-center justify-center transition-all duration-300 ease-out hover:bg-muted/70"
               onClick={onToggle}
             >
               <ChevronLeft
                 className={cn("h-4 w-4 transition-transform", isCollapsed && "rotate-180")}
               />
-              {!isCollapsed && <span className="ml-2">{tooltipText}</span>}
+              <span
+                className={cn(
+                  "ml-2 whitespace-nowrap overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                  isCollapsed ? "max-w-0 opacity-0" : "max-w-[160px] opacity-100"
+                )}
+              >
+                {tooltipText}
+              </span>
             </Button>
           </TooltipTrigger>
           {isCollapsed && (
