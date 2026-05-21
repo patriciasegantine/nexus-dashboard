@@ -7,8 +7,9 @@ import { AppRoutes } from "@/constants/routes"
 import { UserNav } from "@/components/header/user-nav"
 import { ThemeToggle } from "@/components/theme/theme-toggle"
 import { Button } from "@/components/ui/button"
-import { Menu } from "lucide-react"
+import { Bell, Menu } from "lucide-react"
 import { useApp } from "@/contexts/app-context"
+import { Badge } from "@/components/ui/badge"
 
 export function Header() {
   const { data: session } = useSession()
@@ -16,7 +17,7 @@ export function Header() {
 
   return (
     <header className="fixed top-0 left-0 right-0 h-16 border-b bg-background z-40">
-      <div className="h-full px-4 md:px-6 flex items-center justify-between">
+      <div className="h-full px-4 md:px-6 flex items-center justify-between gap-4">
         <div className="flex items-center gap-2">
           <Button
             variant="ghost"
@@ -25,7 +26,7 @@ export function Header() {
             onClick={toggleMobileSidebar}
             aria-label="Open sidebar menu"
           >
-            <Menu className="h-5 w-5" />
+            <Menu className="h-6 w-6" />
           </Button>
           <Link href={AppRoutes.DASHBOARD.HOME} className="flex items-center gap-2">
             <Image src="/logo.svg" alt="Nexus" width={24} height={24} className="rounded" />
@@ -33,17 +34,20 @@ export function Header() {
           </Link>
         </div>
 
-        <div className="flex items-center gap-4">
-          <ThemeToggle />
+        <div className="flex items-center gap-2 md:gap-4 min-w-0">
           {session?.user ? (
-            <UserNav user={session.user} />
+            <>
+              <Button variant="ghost" size="icon" className="relative h-10 w-10" aria-label="Notifications">
+                <Bell className="h-7 w-7" />
+                <Badge className="absolute -right-1 -top-1 h-5 min-w-5 px-1 text-[10px] leading-none">
+                  3
+                </Badge>
+              </Button>
+
+              <UserNav user={session.user} />
+            </>
           ) : (
-            <Link
-              href={AppRoutes.AUTH.LOGIN}
-              className="text-sm font-medium hover:text-foreground transition-colors"
-            >
-              Sign in
-            </Link>
+            <ThemeToggle />
           )}
         </div>
       </div>
