@@ -46,34 +46,58 @@ const SIDEBAR_ITEMS = [
 
 export function Sidebar() {
   const pathname = usePathname()
-  const {isCollapsed, toggleSidebar} = useApp()
+  const {isCollapsed, isMobileSidebarOpen, toggleSidebar, closeMobileSidebar} = useApp()
   
   const sidebarWidth = isCollapsed ? SIDEBAR_CONFIG.COLLAPSED_WIDTH : SIDEBAR_CONFIG.EXPANDED_WIDTH
   
   return (
-    <div className={cn(
-      `fixed ${SIDEBAR_CONFIG.TOP_OFFSET} left-0 ${SIDEBAR_CONFIG.HEIGHT} border-r bg-background`,
-      "transition-all duration-300 ease-in-out flex flex-col",
-      sidebarWidth
-    )}>
-      <NavigationSection
-        pathname={pathname}
-        isCollapsed={isCollapsed}
-      />
-      <CollapseToggleSection
-        isCollapsed={isCollapsed}
-        onToggle={toggleSidebar}
-      />
-    </div>
+    <>
+      {isMobileSidebarOpen && (
+        <button
+          type="button"
+          className="fixed inset-0 top-16 z-30 bg-black/50 md:hidden"
+          onClick={closeMobileSidebar}
+          aria-label="Close sidebar"
+        />
+      )}
+
+      <div className={cn(
+        `fixed ${SIDEBAR_CONFIG.TOP_OFFSET} left-0 ${SIDEBAR_CONFIG.HEIGHT} border-r bg-background z-40`,
+        "transition-transform duration-300 ease-in-out w-64 md:hidden",
+        isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full"
+      )}>
+        <NavigationSection
+          pathname={pathname}
+          isCollapsed={false}
+          onItemSelect={closeMobileSidebar}
+        />
+      </div>
+
+      <div className={cn(
+        `fixed ${SIDEBAR_CONFIG.TOP_OFFSET} left-0 ${SIDEBAR_CONFIG.HEIGHT} border-r bg-background`,
+        "transition-all duration-300 ease-in-out md:flex flex-col hidden",
+        sidebarWidth
+      )}>
+        <NavigationSection
+          pathname={pathname}
+          isCollapsed={isCollapsed}
+        />
+        <CollapseToggleSection
+          isCollapsed={isCollapsed}
+          onToggle={toggleSidebar}
+        />
+      </div>
+    </>
   )
 }
 
 interface NavigationSectionProps {
   pathname: string
   isCollapsed: boolean
+  onItemSelect?: () => void
 }
 
-function NavigationSection({pathname, isCollapsed}: NavigationSectionProps) {
+function NavigationSection({pathname, isCollapsed, onItemSelect}: NavigationSectionProps) {
   return (
     <div className="flex-1 space-y-4 py-4">
       <div className="px-3 py-2">
@@ -84,6 +108,7 @@ function NavigationSection({pathname, isCollapsed}: NavigationSectionProps) {
               item={item}
               isActive={pathname === item.href}
               isCollapsed={isCollapsed}
+              onItemSelect={onItemSelect}
             />
           ))}
         </nav>
@@ -96,16 +121,17 @@ interface NavigationItemProps {
   item: typeof SIDEBAR_ITEMS[number]
   isActive: boolean
   isCollapsed: boolean
+  onItemSelect?: () => void
 }
 
-function NavigationItem({item, isActive, isCollapsed}: NavigationItemProps) {
+function NavigationItem({item, isActive, isCollapsed, onItemSelect}: NavigationItemProps) {
   const IconComponent = item.icon
   
   return (
     <TooltipProvider delayDuration={0}>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Link href={item.href}>
+          <Link href={item.href} onClick={onItemSelect}>
             <Button
               variant={isActive ? "secondary" : "ghost"}
               className={cn(
