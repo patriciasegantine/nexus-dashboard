@@ -56,6 +56,7 @@ export async function registerUser(
     name: formData.get("name"),
     email: formData.get("email"),
     password: formData.get("password"),
+    confirmPassword: formData.get("confirmPassword"),
   }
 
   const parsed = registerSchema.safeParse(raw)
