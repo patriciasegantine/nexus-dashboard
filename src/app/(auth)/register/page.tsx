@@ -11,14 +11,17 @@ import { signIn } from "next-auth/react"
 import Link from "next/link"
 import { AppRoutes } from "@/constants/routes"
 import { useRouter } from "next/navigation"
-import { Eye, EyeOff } from "lucide-react"
+import { RegisterPasswordFields } from "@/app/(auth)/register/components/register-password-fields"
 
 const initialState = { success: false, error: undefined }
 
 export default function RegisterPage() {
   const router = useRouter()
   const [state, action, isPending] = useActionState(registerUser, initialState)
-  const [showPassword, setShowPassword] = useState(false)
+  const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+
+  const passwordMismatch = confirmPassword.length > 0 && password !== confirmPassword
 
   useEffect(() => {
     if (state.success && state.redirectTo) {
@@ -27,7 +30,7 @@ export default function RegisterPage() {
   }, [router, state.redirectTo, state.success])
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4">
+    <div className="min-h-[calc(100dvh-64px)] flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-sm space-y-8">
         <div className="space-y-2 text-center">
           <h1 className="text-3xl font-light">Create an account</h1>
@@ -43,33 +46,19 @@ export default function RegisterPage() {
             <Label htmlFor="email">Email</Label>
             <Input id="email" name="email" type="email" placeholder="you@example.com" className="h-12" required />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <div className="relative">
-              <Input
-                id="password"
-                name="password"
-                type={showPassword ? "text" : "password"}
-                placeholder="Min. 8 characters"
-                className="h-12 pr-11"
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword((value) => !value)}
-                aria-label={showPassword ? "Hide password" : "Show password"}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-              >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
-            </div>
-          </div>
+          <RegisterPasswordFields
+            password={password}
+            confirmPassword={confirmPassword}
+            onPasswordChange={setPassword}
+            onConfirmPasswordChange={setConfirmPassword}
+            passwordMismatch={passwordMismatch}
+          />
 
           {state.error && (
             <p className="text-sm text-destructive">{state.error}</p>
           )}
 
-          <Button type="submit" className="w-full h-12" disabled={isPending}>
+          <Button type="submit" className="w-full h-12" disabled={isPending || passwordMismatch}>
             {isPending ? "Creating account..." : "Sign up"}
           </Button>
         </form>
