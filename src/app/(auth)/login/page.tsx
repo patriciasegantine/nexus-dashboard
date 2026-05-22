@@ -1,6 +1,7 @@
 "use client"
 
 import { useActionState } from "react"
+import { useState } from "react"
 import { signIn } from "next-auth/react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -8,11 +9,13 @@ import { Label } from "@/components/ui/label"
 import Link from "next/link"
 import { AppRoutes } from "@/constants/routes"
 import { loginUser } from "@/lib/actions/auth"
+import { Eye, EyeOff } from "lucide-react"
 
 const initialState = { success: false, error: undefined }
 
 export default function LoginPage() {
   const [state, action, isPending] = useActionState(loginUser, initialState)
+  const [showPassword, setShowPassword] = useState(false)
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4">
@@ -39,14 +42,32 @@ export default function LoginPage() {
           </div>
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              name="password"
-              type="password"
-              placeholder="••••••••"
-              className="h-12"
-              required
-            />
+            <div className="relative">
+              <Input
+                id="password"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="••••••••"
+                className="h-12 pr-11"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((value) => !value)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+          </div>
+          <div className="flex justify-end">
+            <Link
+              href={AppRoutes.AUTH.FORGOT_PASSWORD}
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Forgot password?
+            </Link>
           </div>
           {state.error && (
             <p className="text-sm text-destructive">{state.error}</p>
