@@ -10,7 +10,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const { isCollapsed } = useApp()
 
   return (
-    <div className="min-h-screen bg-background mt-8">
+    <div className="min-h-[calc(100vh-64px)] bg-background">
       <WelcomeModal />
       <div className="flex">
         <Sidebar />

@@ -11,7 +11,7 @@ export function Header() {
   const { data: session } = useSession()
 
   return (
-    <header className="fixed top-0 left-0 right-0 h-16 border-b bg-background z-40">
+    <header className="sticky top-0 h-16 border-b bg-background z-40">
       <div className="h-full px-6 flex items-center justify-between">
         <Link href={AppRoutes.DASHBOARD.HOME} className="flex items-center gap-2">
           <Image src="/logo.svg" alt="Nexus" width={24} height={24} className="rounded" />

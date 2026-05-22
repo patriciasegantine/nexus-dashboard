@@ -42,7 +42,7 @@ export default function RootLayout({
         <QueryProvider>
           <AppProvider>
             <Header/>
-            <main className="pt-14">
+            <main>
               {children}
             </main>
           </AppProvider>
