@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { PasswordRules } from "@/components/password-rules"
 import { usePasswordRules } from "@/hooks/use-password-rules"
+import { cn } from "@/lib/utils"
 
 type RegisterPasswordFieldsProps = {
   password: string
@@ -13,6 +14,7 @@ type RegisterPasswordFieldsProps = {
   onPasswordChange: (value: string) => void
   onConfirmPasswordChange: (value: string) => void
   passwordMismatch: boolean
+  passwordInvalid: boolean
 }
 
 export function RegisterPasswordFields({
@@ -21,8 +23,9 @@ export function RegisterPasswordFields({
   onPasswordChange,
   onConfirmPasswordChange,
   passwordMismatch,
+  passwordInvalid,
 }: RegisterPasswordFieldsProps) {
-  const { showRules, setShowRules, passwordRules } = usePasswordRules(password)
+  const { showRules, setShowRules, passwordRules, completedRules } = usePasswordRules(password)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
@@ -35,12 +38,13 @@ export function RegisterPasswordFields({
             id="password"
             name="password"
             type={showPassword ? "text" : "password"}
-            placeholder="Min. 8 characters"
-            className="h-12 pr-11"
+            placeholder="enter your password"
+            className={cn("h-12 w-full pr-11", passwordInvalid && "border-destructive focus-visible:ring-destructive")}
             value={password}
             onChange={(event) => onPasswordChange(event.target.value)}
             onFocus={() => setShowRules(true)}
             onBlur={() => setShowRules(password.length > 0)}
+            autoComplete="new-password"
             required
           />
           <button
@@ -51,8 +55,16 @@ export function RegisterPasswordFields({
           >
             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>
+
+          <div className="mt-2 md:absolute md:left-full md:top-0 md:ml-3 md:mt-0 md:w-64 md:z-50">
+            <PasswordRules rules={passwordRules} visible={showRules || password.length > 0} />
+          </div>
         </div>
-        <PasswordRules rules={passwordRules} visible={showRules || password.length > 0} />
+        {passwordInvalid && (
+          <p className="text-sm text-destructive">
+            Password must satisfy all rules ({completedRules}/{passwordRules.length}).
+          </p>
+        )}
       </div>
 
       <div className="space-y-2">
@@ -62,10 +74,11 @@ export function RegisterPasswordFields({
             id="confirmPassword"
             name="confirmPassword"
             type={showConfirmPassword ? "text" : "password"}
-            placeholder="Repeat your password"
-            className="h-12 pr-11"
+            placeholder="confirm your password"
+            className={cn("h-12 pr-11", passwordMismatch && "border-destructive focus-visible:ring-destructive")}
             value={confirmPassword}
             onChange={(event) => onConfirmPasswordChange(event.target.value)}
+            autoComplete="new-password"
             required
           />
           <button

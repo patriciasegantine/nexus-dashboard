@@ -33,9 +33,14 @@ export const registerSchema = z.object({
   confirmPassword: z
     .string()
     .min(1, "Please confirm your password"),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
+}).superRefine((data, ctx) => {
+  if (data.password !== data.confirmPassword) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Passwords don't match",
+      path: ["confirmPassword"],
+    })
+  }
 })
 
 export type RegisterInput = z.infer<typeof registerSchema>
@@ -61,9 +66,14 @@ export const resetPasswordSchema = z.object({
   confirmPassword: z
     .string()
     .min(1, "Please confirm your password"),
-}).refine((data) => data.newPassword === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
+}).superRefine((data, ctx) => {
+  if (data.newPassword !== data.confirmPassword) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Passwords don't match",
+      path: ["confirmPassword"],
+    })
+  }
 })
 
 export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>

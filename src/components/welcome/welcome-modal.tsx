@@ -19,17 +19,26 @@ function getWelcomeSeenKey(userId: string) {
 }
 
 export function WelcomeModal() {
-  const { data: session, status } = useSession()
+  const { data: session, status, update } = useSession()
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
-    if (status !== "authenticated" || !session?.user?.id) return
+    if (status === "unauthenticated") {
+      void update()
+    }
+  }, [status, update])
+
+  useEffect(() => {
+    if (status !== "authenticated") return
+
+    const userIdentifier = session?.user?.id ?? session?.user?.email
+    if (!userIdentifier) return
 
     const forceWelcome = searchParams.get("welcome") === "1"
-    const key = getWelcomeSeenKey(session.user.id)
+    const key = getWelcomeSeenKey(userIdentifier)
     const seen = localStorage.getItem(key) === "1"
 
     if (forceWelcome || !seen) {
@@ -40,7 +49,7 @@ export function WelcomeModal() {
     if (forceWelcome) {
       router.replace(pathname)
     }
-  }, [pathname, router, searchParams, session?.user?.id, status])
+  }, [pathname, router, searchParams, session?.user?.email, session?.user?.id, status])
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
