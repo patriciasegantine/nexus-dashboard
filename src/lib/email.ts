@@ -1,4 +1,5 @@
 import { buildWelcomeEmailTemplate } from "@/lib/mail/templates/welcome-email"
+import nodemailer from "nodemailer"
 
 type WelcomeEmailInput = {
   name: string
@@ -6,44 +7,49 @@ type WelcomeEmailInput = {
 }
 
 export async function sendWelcomeEmail({ name, email }: WelcomeEmailInput): Promise<boolean> {
-  const webhookUrl = process.env.EMAIL_WEBHOOK_URL
-    ?? (process.env.NEXTAUTH_URL ? `${process.env.NEXTAUTH_URL}/api/webhooks/email` : undefined)
-  const webhookToken = process.env.EMAIL_WEBHOOK_TOKEN
+  const gmailUser = process.env.GMAIL_USER
+  const gmailAppPassword = process.env.GMAIL_APP_PASSWORD
+  const from = process.env.EMAIL_FROM
 
-  if (!webhookUrl) {
-    console.warn("Email webhook URL is not set. Configure EMAIL_WEBHOOK_URL or NEXTAUTH_URL.")
+  if (!gmailUser || !gmailAppPassword || !from) {
+    console.error("welcome_email_failed", {
+      event: "welcome_email_failed",
+      reason: "missing_gmail_smtp_config",
+      hasGmailUser: Boolean(gmailUser),
+      hasGmailAppPassword: Boolean(gmailAppPassword),
+      hasEmailFrom: Boolean(from),
+      to: email,
+    })
     return false
   }
 
   try {
     const template = buildWelcomeEmailTemplate(name)
-
-    const response = await fetch(webhookUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...(webhookToken ? { Authorization: `Bearer ${webhookToken}` } : {}),
+    const transporter = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false,
+      auth: {
+        user: gmailUser,
+        pass: gmailAppPassword,
       },
-      body: JSON.stringify({
-        type: "WELCOME_EMAIL",
-        to: email,
-        payload: {
-          name,
-        },
-        subject: template.subject,
-        text: template.text,
-        html: template.html,
-      }),
     })
 
-    if (!response.ok) {
-      console.error("Failed to send welcome email:", response.status, response.statusText)
-      return false
-    }
-
+    await transporter.sendMail({
+      from,
+      to: email,
+      subject: template.subject,
+      text: template.text,
+      html: template.html,
+    })
     return true
   } catch (error) {
-    console.error("Error sending welcome email:", error)
+    console.error("welcome_email_failed", {
+      event: "welcome_email_failed",
+      reason: "unexpected_exception",
+      to: email,
+      error,
+    })
     return false
   }
 }
