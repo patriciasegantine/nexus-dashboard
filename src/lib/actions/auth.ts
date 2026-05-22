@@ -79,7 +79,15 @@ export async function registerUser(
     data: { name, email, password: hashedPassword },
   })
 
-  await sendWelcomeEmail({ name, email })
+  void sendWelcomeEmail({ name, email })
+    .catch((error) => {
+      console.error("welcome_email_failed", {
+        event: "welcome_email_failed",
+        reason: "async_dispatch_exception",
+        to: email,
+        error,
+      })
+    })
 
   try {
     await signIn("credentials", {
