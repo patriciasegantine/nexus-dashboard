@@ -5,7 +5,6 @@ import bcrypt from "bcryptjs"
 import { db } from "@/lib/db"
 import { authConfig } from "@/auth.config"
 import { loginSchema } from "@/validations/auth"
-import { sendWelcomeEmail } from "@/lib/email"
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
@@ -39,15 +38,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     session({ session, token }) {
       if (token.id) session.user.id = token.id as string
       return session
-    },
-  },
-  events: {
-    async createUser({ user }) {
-      if (!user.email) return
-      await sendWelcomeEmail({
-        name: user.name ?? "there",
-        email: user.email,
-      })
     },
   },
 })

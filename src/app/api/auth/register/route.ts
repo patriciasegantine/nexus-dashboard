@@ -4,7 +4,6 @@ import { registerSchema } from "@/validations/auth"
 import { AUTH_ERROR_CODES } from "@/constants/erros"
 import { AUTH_MESSAGES } from "@/constants/messagens"
 import { apiError, apiSuccess } from "@/lib/api/response"
-import { sendWelcomeEmail } from "@/lib/email"
 
 export async function POST(request: Request) {
   try {
@@ -37,8 +36,6 @@ export async function POST(request: Request) {
       data: { name, email, password: hashedPassword },
       select: { id: true, name: true, email: true },
     })
-
-    await sendWelcomeEmail({ name, email })
 
     return apiSuccess(
       { user },
