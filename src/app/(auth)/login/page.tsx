@@ -37,6 +37,7 @@ export default function LoginPage() {
               type="email"
               placeholder="you@example.com"
               className="h-12"
+              autoComplete="email"
               required
             />
           </div>
@@ -49,6 +50,7 @@ export default function LoginPage() {
                 type={showPassword ? "text" : "password"}
                 placeholder="••••••••"
                 className="h-12 pr-11"
+                autoComplete="current-password"
                 required
               />
               <button
