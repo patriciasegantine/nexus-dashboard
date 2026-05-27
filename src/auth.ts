@@ -5,8 +5,9 @@ import bcrypt from "bcryptjs"
 import { db } from "@/lib/db"
 import { authConfig } from "@/auth.config"
 import { loginSchema } from "@/validations/auth"
+import { sendWelcomeEmail } from "@/lib/email"
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
+export const { handlers, auth, signIn } = NextAuth({
   ...authConfig,
   adapter: PrismaAdapter(db),
   session: { strategy: "jwt" },
@@ -38,6 +39,22 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     session({ session, token }) {
       if (token.id) session.user.id = token.id as string
       return session
+    },
+  },
+  events: {
+    async createUser({ user }) {
+      const email = user.email?.trim().toLowerCase()
+      if (!email) return
+
+      const name = user.name?.trim() || "there"
+      void sendWelcomeEmail({ name, email }).catch((error) => {
+        console.error("welcome_email_failed", {
+          event: "welcome_email_failed",
+          reason: "nextauth_create_user_event",
+          to: email,
+          error,
+        })
+      })
     },
   },
 })
