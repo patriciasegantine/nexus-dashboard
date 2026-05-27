@@ -1,29 +1,39 @@
-import { Check } from "lucide-react"
+import { cn } from "@/lib/utils"
+import type { PasswordRule } from "@/hooks/use-password-rules"
 
 interface PasswordRulesProps {
-  rules: {
-    text: string
-    valid: boolean
-  }[]
+  rules: PasswordRule[]
+  visible: boolean
 }
 
-export function PasswordRules({ rules }: PasswordRulesProps) {
+export function PasswordRules({ rules, visible }: PasswordRulesProps) {
+  const completed = rules.filter((rule) => rule.valid).length
+
   return (
-    <div className="bg-muted/50 rounded-lg p-4 space-y-2">
+    <div
+      className={cn(
+        "overflow-hidden rounded-md border bg-muted/70 transition-all duration-300",
+        visible ? "max-h-80 opacity-100 p-4" : "max-h-0 opacity-0 p-0 border-transparent"
+      )}
+    >
+      <p className="mb-2 text-sm text-muted-foreground">
+        Password strength: {completed}/{rules.length}
+      </p>
+
       {rules.map((rule, index) => (
         <div
           key={index}
-          className={`flex items-center gap-2 text-sm transition-colors ${
-            rule.valid
-              ? 'text-muted-foreground'
-              : 'text-muted-foreground/60'
-          }`}
+          className={cn(
+            "flex items-center gap-2 py-0.5 text-sm transition-all duration-200",
+            rule.valid ? "text-foreground" : "text-muted-foreground"
+          )}
         >
-          <Check className={`h-4 w-4 ${
-            rule.valid
-              ? 'text-green-500'
-              : 'text-muted-foreground/30'
-          }`} />
+          <span
+            className={cn(
+              "h-2.5 w-2.5 rounded-full",
+              rule.valid ? "bg-emerald-500" : "bg-muted-foreground/40"
+            )}
+          />
           <span>{rule.text}</span>
         </div>
       ))}

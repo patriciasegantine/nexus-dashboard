@@ -13,7 +13,8 @@ export const authConfig = {
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user
-      const isPublicRoute = nextUrl.pathname.startsWith("/login")
+      const publicRoutes = ["/login", "/register", "/forgot-password", "/reset-password"]
+      const isPublicRoute = publicRoutes.some((route) => nextUrl.pathname.startsWith(route))
 
       // Logged-in user trying to access /login → redirect to dashboard
       if (isLoggedIn && isPublicRoute) {

@@ -2,16 +2,12 @@ import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import bcrypt from "bcryptjs"
-import { z } from "zod"
 import { db } from "@/lib/db"
 import { authConfig } from "@/auth.config"
+import { loginSchema } from "@/validations/auth"
+import { sendWelcomeEmail } from "@/lib/email"
 
-const credentialsSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(1),
-})
-
-export const { handlers, auth, signIn, signOut } = NextAuth({
+export const { handlers, auth, signIn } = NextAuth({
   ...authConfig,
   adapter: PrismaAdapter(db),
   session: { strategy: "jwt" },
@@ -19,10 +15,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     ...authConfig.providers,
     Credentials({
       authorize: async (credentials) => {
-        const parsed = credentialsSchema.safeParse(credentials)
+        const parsed = loginSchema.safeParse(credentials)
         if (!parsed.success) return null
 
-        const { email, password } = parsed.data
+        const email = parsed.data.email.trim().toLowerCase()
+        const { password } = parsed.data
 
         const user = await db.user.findUnique({ where: { email } })
         if (!user || !user.password) return null
@@ -42,6 +39,22 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     session({ session, token }) {
       if (token.id) session.user.id = token.id as string
       return session
+    },
+  },
+  events: {
+    async createUser({ user }) {
+      const email = user.email?.trim().toLowerCase()
+      if (!email) return
+
+      const name = user.name?.trim() || "there"
+      void sendWelcomeEmail({ name, email }).catch((error) => {
+        console.error("welcome_email_failed", {
+          event: "welcome_email_failed",
+          reason: "nextauth_create_user_event",
+          to: email,
+          error,
+        })
+      })
     },
   },
 })
