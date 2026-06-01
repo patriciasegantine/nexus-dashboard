@@ -10,6 +10,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { PasswordRules } from "@/components/password-rules"
 import { usePasswordRules } from "@/hooks/use-password-rules"
+import { AuthFormShell } from "@/components/auth/auth-form-shell"
+import { INVALID_INPUT_CLASS } from "@/lib/form-styles"
 import { cn } from "@/lib/utils"
 
 type ResetPasswordFormProps = {
@@ -25,10 +27,24 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
   const [error, setError] = useState("")
   const [isPending, setIsPending] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
-  const { showRules, setShowRules, passwordRules, completedRules } = usePasswordRules(newPassword)
+  const { showRules, setShowRules, passwordRules } = usePasswordRules(newPassword)
 
   const passwordMismatch = confirmPassword.length > 0 && newPassword !== confirmPassword
-  const passwordInvalid = newPassword.length > 0 && completedRules !== passwordRules.length
+  const passwordRulesWithMatch = [
+    ...passwordRules,
+    {
+      text: "passwords match",
+      valid: confirmPassword.length > 0 && !passwordMismatch,
+    },
+  ]
+  const completedRulesWithMatch = passwordRulesWithMatch.filter((rule) => rule.valid).length
+  const passwordInvalid = newPassword.length > 0 && completedRulesWithMatch !== passwordRulesWithMatch.length
+  const canSubmit =
+    Boolean(token)
+    && newPassword.length > 0
+    && confirmPassword.length > 0
+    && !passwordMismatch
+    && !passwordInvalid
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -76,14 +92,10 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
   }
 
   return (
-    <div className="min-h-[calc(100dvh-64px)] flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-sm space-y-8 md:-translate-y-6">
-        <div className="space-y-2 text-center">
-          <h1 className="text-3xl font-light">Reset your password</h1>
-          <p className="text-sm text-muted-foreground">
-            Choose a new password to continue.
-          </p>
-        </div>
+    <AuthFormShell
+      title="Reset your password"
+      subtitle="Choose a new password to continue."
+    >
 
         {!token ? (
           <div className="space-y-4 text-center">
@@ -109,7 +121,7 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
             </Link>
           </div>
         ) : (
-          <form onSubmit={onSubmit} className="space-y-4">
+          <form onSubmit={onSubmit} className="space-y-4" noValidate>
             <div className="space-y-2">
               <Label htmlFor="newPassword">New password</Label>
               <div className="relative">
@@ -118,7 +130,10 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
                   name="newPassword"
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter your new password"
-                  className={cn("h-12 w-full pr-11", passwordInvalid && "border-destructive focus-visible:ring-destructive")}
+                  className={cn(
+                    "h-12 w-full pr-11",
+                    passwordInvalid && INVALID_INPUT_CLASS
+                  )}
                   value={newPassword}
                   onChange={(event) => setNewPassword(event.target.value)}
                   onFocus={() => setShowRules(true)}
@@ -135,12 +150,12 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
                 <div className="mt-2 md:absolute md:left-full md:top-0 md:ml-3 md:mt-0 md:w-64 md:z-50">
-                  <PasswordRules rules={passwordRules} visible={showRules || newPassword.length > 0} />
+                  <PasswordRules rules={passwordRulesWithMatch} visible={showRules || newPassword.length > 0 || confirmPassword.length > 0} />
                 </div>
               </div>
               {passwordInvalid && (
                 <p className="text-sm text-destructive">
-                  Password must satisfy all rules ({completedRules}/{passwordRules.length}).
+                  Password must satisfy all rules ({completedRulesWithMatch}/{passwordRulesWithMatch.length}).
                 </p>
               )}
             </div>
@@ -153,7 +168,10 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
                   name="confirmPassword"
                   type={showConfirmPassword ? "text" : "password"}
                   placeholder="Confirm your new password"
-                  className={cn("h-12 pr-11", passwordMismatch && "border-destructive focus-visible:ring-destructive")}
+                  className={cn(
+                    "h-12 pr-11",
+                    passwordMismatch && INVALID_INPUT_CLASS
+                  )}
                   value={confirmPassword}
                   onChange={(event) => setConfirmPassword(event.target.value)}
                   autoComplete="new-password"
@@ -179,21 +197,22 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
               </p>
             )}
 
-            <Button type="submit" className="w-full h-12" disabled={isPending}>
+            <Button type="submit" className="w-full h-12" disabled={isPending || !canSubmit}>
               {isPending ? "Updating..." : "Update password"}
             </Button>
           </form>
         )}
 
-        <div className="text-center">
-          <Link
-            href={AppRoutes.AUTH.LOGIN}
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Back to sign in
-          </Link>
-        </div>
-      </div>
-    </div>
+        {!isSuccess && (
+          <div className="text-center">
+            <Link
+              href={AppRoutes.AUTH.LOGIN}
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Back to sign in
+            </Link>
+          </div>
+        )}
+    </AuthFormShell>
   )
 }

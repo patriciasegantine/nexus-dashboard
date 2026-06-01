@@ -4,20 +4,34 @@ import { useState } from "react"
 import Link from "next/link"
 import { AppRoutes } from "@/constants/routes"
 import { ApiRoutes } from "@/constants/api-routes"
+import { AUTH_MESSAGES } from "@/constants/messagens"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { cn } from "@/lib/utils"
+import { INVALID_INPUT_CLASS } from "@/lib/form-styles"
+import { isValidEmail, normalizeEmail } from "@/lib/validators/email"
+import { AuthFormShell } from "@/components/auth/auth-form-shell"
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("")
   const [error, setError] = useState("")
   const [isPending, setIsPending] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
+  const trimmedEmail = normalizeEmail(email)
+  const isEmailValid = isValidEmail(trimmedEmail)
+  const showEmailError = email.length > 0 && !isEmailValid
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
     setError("")
     setIsSuccess(false)
+
+    if (!isEmailValid) {
+      setError(AUTH_MESSAGES.INVALID_EMAIL)
+      return
+    }
+
     setIsPending(true)
 
     try {
@@ -42,14 +56,10 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-[calc(100dvh-64px)] flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-sm space-y-8 md:-translate-y-6">
-        <div className="space-y-2 text-center">
-          <h1 className="text-3xl font-light">Forgot your password?</h1>
-          <p className="text-sm text-muted-foreground">
-            Enter your email and we&apos;ll send reset instructions.
-          </p>
-        </div>
+    <AuthFormShell
+      title="Forgot your password?"
+      subtitle="Enter your email and we'll send reset instructions."
+    >
 
         {isSuccess ? (
           <div className="space-y-4">
@@ -73,7 +83,7 @@ export default function ForgotPasswordPage() {
             </Link>
           </div>
         ) : (
-          <form onSubmit={onSubmit} className="space-y-4">
+          <form onSubmit={onSubmit} className="space-y-4" noValidate>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -81,11 +91,14 @@ export default function ForgotPasswordPage() {
                 name="email"
                 type="email"
                 placeholder="you@example.com"
-                className="h-12"
+                className={cn("h-12", showEmailError && INVALID_INPUT_CLASS)}
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 required
               />
+              {showEmailError && (
+                <p className="text-sm text-destructive">{AUTH_MESSAGES.INVALID_EMAIL}</p>
+              )}
             </div>
 
             {error && (
@@ -94,7 +107,7 @@ export default function ForgotPasswordPage() {
               </p>
             )}
 
-            <Button type="submit" className="w-full h-12" disabled={isPending}>
+            <Button type="submit" className="w-full h-12" disabled={isPending || !isEmailValid}>
               {isPending ? "Sending..." : "Send reset link"}
             </Button>
           </form>
@@ -110,7 +123,6 @@ export default function ForgotPasswordPage() {
             </Link>
           </div>
         )}
-      </div>
-    </div>
+    </AuthFormShell>
   )
 }
