@@ -1,5 +1,5 @@
 import NextAuth from "next-auth"
-import { authConfig } from "@/auth.config"
+import { authConfig } from "@/auth/config"
 /**
  * Middleware uses ONLY authConfig (no database imports).
  * This keeps the Edge Runtime bundle free of Node.js modules (pg, crypto, etc).
