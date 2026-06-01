@@ -50,7 +50,7 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-[calc(100dvh-64px)] flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-sm space-y-8">
+      <div className="w-full max-w-sm space-y-8 md:-translate-y-6">
         <div className="space-y-2 text-center">
           <h1 className="text-3xl font-light">Create an account</h1>
           <p className="text-sm text-muted-foreground">Enter your details to get started</p>
