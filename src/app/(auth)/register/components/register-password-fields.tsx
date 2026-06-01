@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { PasswordRules } from "@/components/password-rules"
 import { usePasswordRules } from "@/hooks/use-password-rules"
+import { INVALID_INPUT_CLASS } from "@/lib/form-styles"
 import { cn } from "@/lib/utils"
 
 type RegisterPasswordFieldsProps = {
@@ -25,7 +26,15 @@ export function RegisterPasswordFields({
   passwordMismatch,
   passwordInvalid,
 }: RegisterPasswordFieldsProps) {
-  const { showRules, setShowRules, passwordRules, completedRules } = usePasswordRules(password)
+  const { showRules, setShowRules, passwordRules } = usePasswordRules(password)
+  const passwordRulesWithMatch = [
+    ...passwordRules,
+    {
+      text: "passwords match",
+      valid: confirmPassword.length > 0 && !passwordMismatch,
+    },
+  ]
+  const completedRulesWithMatch = passwordRulesWithMatch.filter((rule) => rule.valid).length
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
@@ -39,7 +48,10 @@ export function RegisterPasswordFields({
             name="password"
             type={showPassword ? "text" : "password"}
             placeholder="enter your password"
-            className={cn("h-12 w-full pr-11", passwordInvalid && "border-destructive focus-visible:ring-destructive")}
+            className={cn(
+              "h-12 w-full pr-11",
+              passwordInvalid && INVALID_INPUT_CLASS
+            )}
             value={password}
             onChange={(event) => onPasswordChange(event.target.value)}
             onFocus={() => setShowRules(true)}
@@ -57,12 +69,12 @@ export function RegisterPasswordFields({
           </button>
 
           <div className="mt-2 md:absolute md:left-full md:top-0 md:ml-3 md:mt-0 md:w-64 md:z-50">
-            <PasswordRules rules={passwordRules} visible={showRules || password.length > 0} />
+            <PasswordRules rules={passwordRulesWithMatch} visible={showRules || password.length > 0 || confirmPassword.length > 0} />
           </div>
         </div>
         {passwordInvalid && (
           <p className="text-sm text-destructive">
-            Password must satisfy all rules ({completedRules}/{passwordRules.length}).
+            Password must satisfy all rules ({completedRulesWithMatch}/{passwordRulesWithMatch.length}).
           </p>
         )}
       </div>
@@ -75,7 +87,10 @@ export function RegisterPasswordFields({
             name="confirmPassword"
             type={showConfirmPassword ? "text" : "password"}
             placeholder="confirm your password"
-            className={cn("h-12 pr-11", passwordMismatch && "border-destructive focus-visible:ring-destructive")}
+            className={cn(
+              "h-12 pr-11",
+              passwordMismatch && INVALID_INPUT_CLASS
+            )}
             value={confirmPassword}
             onChange={(event) => onConfirmPasswordChange(event.target.value)}
             autoComplete="new-password"
