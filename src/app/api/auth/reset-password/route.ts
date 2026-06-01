@@ -5,9 +5,20 @@ import { AUTH_ERROR_CODES } from "@/constants/erros"
 import { AUTH_MESSAGES } from "@/constants/messagens"
 import { apiError, apiSuccess } from "@/lib/api/response"
 import { db } from "@/lib/db"
+import { getClientIp, isRateLimited } from "@/lib/rate-limit"
 
 export async function POST(request: Request) {
   try {
+    const ip = getClientIp(request)
+    const rateLimit = isRateLimited(`reset-password:${ip}`, 10, 15 * 60 * 1000)
+    if (rateLimit.limited) {
+      return apiError(
+        "RATE_LIMITED",
+        `Too many requests. Try again in ${rateLimit.retryAfterSeconds}s.`,
+        429
+      )
+    }
+
     const body = await request.json()
     const parsed = resetPasswordSchema.safeParse(body)
 

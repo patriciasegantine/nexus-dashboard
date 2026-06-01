@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import React, { useState } from "react"
 import Link from "next/link"
 import { AppRoutes } from "@/constants/routes"
 import { ApiRoutes } from "@/constants/api-routes"
