@@ -1,5 +1,6 @@
 import { buildWelcomeEmailTemplate } from "@/lib/mail/templates/welcome-email"
 import { buildResetPasswordEmailTemplate } from "@/lib/mail/templates/reset-password-email"
+import { getBaseUrl } from "@/lib/base-url"
 import nodemailer from "nodemailer"
 
 type WelcomeEmailInput = {
@@ -49,7 +50,7 @@ export async function sendWelcomeEmail({ name, email }: WelcomeEmailInput): Prom
   }
 
   try {
-    const template = buildWelcomeEmailTemplate(name)
+    const template = buildWelcomeEmailTemplate(name, getBaseUrl())
     const transporter = createTransporter(gmailUser, gmailAppPassword)
 
     await transporter.sendMail({
