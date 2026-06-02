@@ -3,7 +3,7 @@ import Credentials from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import bcrypt from "bcryptjs"
 import { db } from "@/lib/db"
-import { authConfig } from "@/auth.config"
+import { authConfig } from "@/auth/config"
 import { loginSchema } from "@/validations/auth"
 import { sendWelcomeEmail } from "@/lib/email"
 
