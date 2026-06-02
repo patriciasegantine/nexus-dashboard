@@ -1,5 +1,12 @@
-import { redirect } from "next/navigation"
-// Password reset is handled via Google OAuth
-export default function ResetPasswordPage() {
-  redirect("/login")
+import { ResetPasswordForm } from "@/app/(auth)/reset-password/reset-password-form"
+
+type ResetPasswordPageProps = {
+  searchParams?: Promise<{ token?: string }>
+}
+
+export default async function ResetPasswordPage({ searchParams }: ResetPasswordPageProps) {
+  const resolvedSearchParams = searchParams ? await searchParams : undefined
+  const token = resolvedSearchParams?.token ?? ""
+
+  return <ResetPasswordForm token={token} />
 }

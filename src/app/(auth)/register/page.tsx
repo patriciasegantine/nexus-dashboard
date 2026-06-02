@@ -7,14 +7,17 @@ import { registerUser } from "@/lib/actions/auth"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { signIn } from "next-auth/react"
 import Link from "next/link"
 import { AppRoutes } from "@/constants/routes"
+import { AUTH_MESSAGES } from "@/constants/messages"
 import { useRouter } from "next/navigation"
 import { RegisterPasswordFields } from "@/app/(auth)/register/components/register-password-fields"
 import { cn } from "@/lib/utils"
+import { INVALID_INPUT_CLASS } from "@/lib/form-styles"
 import { isStrongPassword } from "@/lib/password"
-import { Chrome } from "lucide-react"
+import { isValidEmail, normalizeEmail } from "@/lib/validators/email"
+import { AuthFormShell } from "@/components/auth/auth-form-shell"
+import { GoogleSignInButton } from "@/components/auth/google-sign-in-button"
 
 const initialState = { success: false, error: undefined }
 
@@ -27,9 +30,9 @@ export default function RegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState("")
 
   const trimmedName = name.trim()
-  const trimmedEmail = email.trim()
+  const trimmedEmail = normalizeEmail(email)
   const isNameValid = trimmedName.length >= 3
-  const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)
+  const isEmailValid = isValidEmail(trimmedEmail)
   const isPasswordValid = isStrongPassword(password)
   const passwordMismatch = confirmPassword.length > 0 && password !== confirmPassword
   const canSubmit =
@@ -49,12 +52,7 @@ export default function RegisterPage() {
   }, [router, state.redirectTo, state.success])
 
   return (
-    <div className="min-h-[calc(100dvh-64px)] flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-sm space-y-8">
-        <div className="space-y-2 text-center">
-          <h1 className="text-3xl font-light">Create an account</h1>
-          <p className="text-sm text-muted-foreground">Enter your details to get started</p>
-        </div>
+    <AuthFormShell title="Create an account" subtitle="Enter your details to get started">
 
         <form action={action} className="space-y-4">
           <div className="space-y-2">
@@ -81,14 +79,14 @@ export default function RegisterPage() {
               name="email"
               type="email"
               placeholder="you@example.com"
-              className={cn("h-12", showEmailError && "border-destructive focus-visible:ring-destructive")}
+              className={cn("h-12", showEmailError && INVALID_INPUT_CLASS)}
               value={email}
               onChange={(event) => setEmail(event.target.value)}
               autoComplete="email"
               required
             />
             {showEmailError && (
-              <p className="text-sm text-destructive">Please enter a valid email address.</p>
+              <p className="text-sm text-destructive">{AUTH_MESSAGES.INVALID_EMAIL}</p>
             )}
           </div>
           <RegisterPasswordFields
@@ -118,15 +116,7 @@ export default function RegisterPage() {
           </div>
         </div>
 
-        <Button
-          type="button"
-          variant="outline"
-          className="w-full h-12"
-          onClick={() => signIn("google", { callbackUrl: "/" })}
-        >
-          <Chrome className="mr-2 h-4 w-4" aria-hidden="true" />
-          Continue with Google
-        </Button>
+        <GoogleSignInButton />
 
         <div className="text-center">
           <Link
@@ -136,7 +126,6 @@ export default function RegisterPage() {
             Already have an account? Sign in
           </Link>
         </div>
-      </div>
-    </div>
+    </AuthFormShell>
   )
 }

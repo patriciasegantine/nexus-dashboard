@@ -6,6 +6,7 @@ export const AUTH_MESSAGES = {
   RESET_PASSWORD_SUCCESS: "Password reset successful. You can now login with your new password.",
   RESET_PASSWORD_FAIL: "Failed to reset password. Please try again.",
   INVALID_CREDENTIALS: "Invalid email or password",
+  INVALID_EMAIL: "Please enter a valid email address.",
   USER_ALREADY_EXISTS: "This email is already registered",
   INVALID_RESET_LINK: "This password reset link is invalid or has expired",
   SAME_PASSWORD: "New password must be different from your current password",

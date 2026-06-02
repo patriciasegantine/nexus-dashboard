@@ -107,8 +107,8 @@
         --accent-foreground: 210 20% 90%;
 
         /* Destructive Colours */
-        --destructive: 0 50% 25%;
-        --destructive-foreground: 210 20% 90%;
+        --destructive: 0 72% 55%;
+        --destructive-foreground: 0 0% 98%;
 
         /* Border and Input Colours */
         --border: 240 5% 20%;

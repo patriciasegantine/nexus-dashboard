@@ -1,155 +1,124 @@
-# Dashboard Analytics - Frontend
+# Nexus Dashboard
 
-A modern React frontend application for data analytics and visualization, featuring a responsive dashboard interface.
+A full-stack project management dashboard built with Next.js, featuring authentication, task tracking, and data visualization.
 
 ![preview](./public/preview.png)
 
-## 🚀 Technologies
+## Tech Stack
 
-- [React](https://react.dev/) - A JavaScript library for building user interfaces
-- [Next.js](https://nextjs.org/) - The React Framework for Production
-- [TypeScript](https://www.typescriptlang.org/) - JavaScript with syntax for types
-- [Tailwind CSS](https://tailwindcss.com/) - A utility-first CSS framework
-- [React Query](https://tanstack.com/query/latest) - Powerful asynchronous state management
-- [Axios](https://axios-http.com/) - Promise based HTTP client
+- **Framework:** Next.js 15 (App Router)
+- **Language:** TypeScript
+- **Auth:** Auth.js v5 (NextAuth) with Google OAuth + Credentials
+- **Database:** PostgreSQL via Prisma ORM
+- **Styling:** Tailwind CSS + Radix UI
+- **State:** TanStack Query
+- **Testing:** Jest + Playwright
 
-## 🎨 Features
+## Features
 
-- Responsive Dashboard Layout
-- Real-time Data Updates
-- Interactive Charts and Graphs
-- User Authentication
-- Dark/Light Theme
-- Error Handling
-- Loading States
+- Credential and Google OAuth authentication
+- Password reset flow with email verification
+- Protected routes via Edge middleware
+- Dark/Light theme
+- Kanban board with drag-and-drop
+- Dashboard with charts and analytics
+- Responsive layout
 
-## 🔒 Authentication
+## Getting Started
 
-The application uses JWT authentication with:
+### Prerequisites
 
-- Access tokens for API requests
-- Refresh token mechanism
-- Automatic token refresh
-- Protected routes
-- Persistent login state
+- Node.js 18.17+
+- PostgreSQL
 
-## 📱 Responsive Design
-
-- Mobile-first approach
-- Tailwind CSS for styling
-- Responsive components
-- Adaptive layouts
-
-## 🔄 State Management
-
-- React Query for server state
-- Context API for global state
-- Local storage for persistence
-- Form state management
-
-## 📋 Prerequisites
-
-- Node.js 18.17 or later
-- npm or yarn
-
-## 🔧 Installation
-
-1. Clone the repository
+### Installation
 
 ```bash
-git clone https://github.com/patriciasegantine/dashboard-analytics-frontend.git
-cd sidebar-analytics-frontend
-```
-
-2. Install dependencies
-
-```bash
+git clone https://github.com/patriciasegantine/nexus-dashboard-frontend.git
+cd nexus-dashboard-frontend
 npm install
 ```
 
-3. Set up environment variables
+### Environment variables
 
 ```bash
 cp .env.example .env
 ```
 
-4. Configure your .env file with:
+Required variables:
 
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:4000
+DATABASE_URL=
+
+AUTH_SECRET=
+AUTH_GOOGLE_ID=
+AUTH_GOOGLE_SECRET=
+
+EMAIL_HOST=
+EMAIL_PORT=
+EMAIL_USER=
+EMAIL_PASS=
+EMAIL_FROM=
 ```
 
-## 🏃‍♂️ Running the Application
-
-### Development
+### Database
 
 ```bash
-npm run dev
+npm run prisma:migrate
 ```
 
-### Build
+### Running
 
 ```bash
-npm run build
+npm run dev        # development
+npm run build      # production build
+npm run start      # production server
 ```
 
-### Start Production Server
+### Tests
 
 ```bash
-npm run start
+npm test              # Jest unit + integration tests
+npm run test:e2e      # Playwright e2e (headless)
+npm run test:e2e:ui   # Playwright e2e (UI mode)
 ```
 
-## 📦 Project Structure
+## Project Structure
 
-    frontend/
-    ├── public/
-    ├── node_modules/
-    ├── src/
-    │ ├── app/
-    │ │ ├── (auth)/
-    │ │ └── (dashboard)/
-    │ ├── components/
-    │ ├── hooks/
-    │ ├── services/
-    │ ├── types/
-    │ └── utils/
-    └── package.json
+```
+src/
+├── app/
+│   ├── (auth)/          # login, register, forgot/reset password
+│   ├── (dashboard)/     # protected pages (board, tasks, overview...)
+│   └── api/             # API routes (auth, webhooks)
+├── auth/                # Auth.js config (Edge-safe)
+├── components/          # Shared UI components
+├── constants/           # App-wide constants
+├── contexts/            # React contexts
+├── hooks/               # Custom hooks
+├── lib/                 # Utilities, db client, email, rate limiting
+├── providers/           # App providers
+├── types/               # TypeScript types
+└── validations/         # Zod schemas
+```
 
-## 📱 Routing
+## Architecture
 
-- Next.js 13+ App Router
-- Route Groups
-- Layouts
-- Server and Client Components
+This project is migrating from a client-only frontend (consuming an external REST API) to a **full-stack Next.js application** using the built-in backend capabilities.
 
-## 🔗 API Integration
+### Current state
 
-This project uses the Dashboard Analytics API for data management and authentication:
+- Authentication is fully handled server-side via Auth.js v5 + Prisma
+- Password reset, email sending, and rate limiting run as Next.js API Routes
+- Dashboard data is still consumed from the external API (migration in progress)
 
-- API Repository: [Dashboard Analytics API](https://github.com/patriciasegantine/dashboard-analytics-server)
-- Base URL: `http://localhost:3000`
+### Pending architectural work
 
-### Main Endpoints:
-
-#### Authentication
-
-- `POST /auth/register` - Create new user account
-- `POST /auth/login` - User authentication
-- `POST /auth/refresh-token` - Refresh access token
-- `GET /auth/me` - Get user profile
-- `POST /auth/logout` - User logout
-
-#### Password Recovery
-
-- `POST /auth/forgot-password` - Request password reset
-- `POST /auth/reset-password` - Reset user password
-
-For more details about the API, please check
-the [API Documentation](https://github.com/patriciasegantine/dashboard-analytics-server#readme).
-
-## 📝 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
+- Remove remaining external API calls and migrate data fetching to server actions or Next.js route handlers
+- Resolve `AppContext` theme duplication with `next-themes`
+- Clean up `dotenv` from production dependencies (Next.js loads `.env` natively)
+- Standardize component co-location across auth pages
+- Evaluate `axios` usage — likely replaceable with native `fetch` after full migration
 
 ---
 
