@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs"
 import { AuthError } from "next-auth"
 import { db } from "@/lib/db"
 import { signIn } from "@/auth"
-import { AUTH_MESSAGES } from "@/constants/messagens"
+import { AUTH_MESSAGES } from "@/constants/messages"
 import { loginSchema, registerSchema } from "@/validations/auth"
 import { sendWelcomeEmail } from "@/lib/email"
 
