@@ -112,7 +112,7 @@ export default function ForgotPasswordPage() {
               <p className="text-sm text-muted-foreground">
                 If{" "}
                 <span className="font-medium text-foreground">{trimmedEmail}</span>
-                {" "}is registered with us, you'll receive a reset link shortly.
+                {" "}is registered with us, you&apos;ll receive a reset link shortly.
               </p>
             </div>
           </div>
