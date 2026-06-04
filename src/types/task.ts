@@ -4,12 +4,24 @@ export type TaskPriority = 'LOW' | 'MEDIUM' | 'HIGH'
 export interface Task {
   id: string
   title: string
+  description?: string | null
   status: TaskStatus
-  workItemId: string,
-  description: string
   priority: TaskPriority
-  assignee: {
-    avatar: string,
-    name: string,
-  }
+  projectId: string
+  userId: string
+  dueDate?: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export interface CreateTaskDTO {
+  title: string
+  description?: string
+  priority: TaskPriority
+  projectId: string
+  dueDate?: string
+}
+
+export interface UpdateTaskDTO extends Partial<CreateTaskDTO> {
+  status?: TaskStatus
 }
