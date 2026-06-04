@@ -1,5 +1,4 @@
-import { Task } from "@/types/task";
-import { WorkItem } from "@/types/work-item";
+import { Task } from "@/types/task"
 
 export interface BoardColumn {
   id: string
@@ -8,7 +7,6 @@ export interface BoardColumn {
 }
 
 export interface Board {
-  workItems: WorkItem[]
   columns: {
     [key: string]: BoardColumn
   }

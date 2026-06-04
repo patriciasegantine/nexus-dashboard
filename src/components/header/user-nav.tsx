@@ -61,7 +61,7 @@ export function UserNav({ user }: UserNavProps) {
           </DropdownMenuItem>
         )}
         <DropdownMenuItem asChild>
-          <Link href={AppRoutes.DASHBOARD.WORK_ITEMS}>
+          <Link href={AppRoutes.DASHBOARD.TASKS}>
             <Plus className="h-4 w-4" />
             New task
           </Link>

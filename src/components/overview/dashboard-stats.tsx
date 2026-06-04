@@ -19,8 +19,8 @@ export function DashboardStats() {
   return (
     <div className="grid gap-4 md:grid-cols-4">
       <StatsCard
-        title="Total Work Items"
-        value={stats?.totalWorkItems}
+        title="Total Tasks"
+        value={stats?.totalTasks}
         icon={<ListTodo className="h-4 w-4 text-muted-foreground"/>}
         isLoading={isLoading}
       />

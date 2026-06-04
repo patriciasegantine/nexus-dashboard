@@ -4,14 +4,16 @@ export const QUERY_KEYS = {
     SESSION: ['auth', 'session'],
   },
   DASHBOARD: {
-    STATS: ['sidebar', 'stats'],
-    ACTIVITIES: ['sidebar', 'activities'],
-    TEAM_PROGRESS: ['sidebar', 'team-progress'],
-    VELOCITY: ['sidebar', 'velocity'],
-    BURNDOWN: ['sidebar', 'burndown'],
+    STATS: ['dashboard', 'stats'],
+    ACTIVITIES: ['dashboard', 'activities'],
   },
-  WORK_ITEMS: {
-    ALL: 'work-items',
-    DETAIL: (id: string) => ['work-items', id],
-  }
+  PROJECTS: {
+    ALL: ['projects'],
+    DETAIL: (id: string) => ['projects', id],
+  },
+  TASKS: {
+    ALL: ['tasks'],
+    BY_PROJECT: (projectId: string) => ['tasks', 'project', projectId],
+    DETAIL: (id: string) => ['tasks', id],
+  },
 } as const

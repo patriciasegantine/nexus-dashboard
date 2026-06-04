@@ -13,7 +13,7 @@ export function WorkItemChart() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Work Items by Status</CardTitle>
+          <CardTitle>Tasks by Status</CardTitle>
         </CardHeader>
         <CardContent className="flex items-center justify-center h-[300px]">
           <Loader2 className="h-8 w-8 animate-spin text-muted-foreground"/>
@@ -31,7 +31,7 @@ export function WorkItemChart() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Work Items by Status</CardTitle>
+        <CardTitle>Tasks by Status</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="h-[300px] relative">
