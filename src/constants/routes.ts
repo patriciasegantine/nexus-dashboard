@@ -7,8 +7,9 @@ export const AppRoutes = {
   },
   DASHBOARD: {
     HOME: '/',
-    WORK_ITEMS: '/work-items',
     BOARD: '/board',
+    PROJECTS: '/projects',
+    TASKS: '/tasks',
     PROFILE: '/profile',
     SETTINGS: '/settings',
   },

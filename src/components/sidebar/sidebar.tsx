@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 import { AppRoutes } from '@/constants/routes'
-import { ChevronLeft, KanbanSquare, LayoutDashboard, ListTodo, Settings, User } from "lucide-react"
+import { ChevronLeft, FolderKanban, KanbanSquare, LayoutDashboard, ListTodo, Settings, User } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { useApp } from "@/contexts/app-context"
 
@@ -28,8 +28,13 @@ const SIDEBAR_ITEMS = [
     icon: KanbanSquare
   },
   {
-    title: "Work Items",
-    href: AppRoutes.DASHBOARD.WORK_ITEMS,
+    title: "Projects",
+    href: AppRoutes.DASHBOARD.PROJECTS,
+    icon: FolderKanban
+  },
+  {
+    title: "Tasks",
+    href: AppRoutes.DASHBOARD.TASKS,
     icon: ListTodo
   },
   {
