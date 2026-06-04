@@ -1,10 +1,9 @@
 "use client"
 
-import React, { useState, useEffect, useRef } from "react"
+import React, { useState, useEffect, useRef, useTransition } from "react"
 import Link from "next/link"
 import { MailCheck } from "lucide-react"
 import { AppRoutes } from "@/constants/routes"
-import { ApiRoutes } from "@/constants/api-routes"
 import { AUTH_MESSAGES } from "@/constants/messages"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -13,6 +12,7 @@ import { cn } from "@/lib/utils"
 import { INVALID_INPUT_CLASS } from "@/lib/form-styles"
 import { isValidEmail, normalizeEmail } from "@/lib/validators/email"
 import { AuthFormShell } from "@/components/auth/auth-form-shell"
+import { requestPasswordReset } from "@/actions/auth"
 
 const RESEND_COOLDOWN = 60
 
@@ -20,9 +20,9 @@ export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("")
   const [error, setError] = useState("")
   const [rateLimitMessage, setRateLimitMessage] = useState("")
-  const [isPending, setIsPending] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
   const [countdown, setCountdown] = useState(0)
+  const [isPending, startTransition] = useTransition()
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const trimmedEmail = normalizeEmail(email)
@@ -48,8 +48,7 @@ export default function ForgotPasswordPage() {
     }
   }, [isSuccess])
 
-  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault()
+  function handleSubmit(formData: FormData) {
     setError("")
     setRateLimitMessage("")
     setIsSuccess(false)
@@ -59,33 +58,21 @@ export default function ForgotPasswordPage() {
       return
     }
 
-    setIsPending(true)
+    startTransition(async () => {
+      const result = await requestPasswordReset({ success: false }, formData)
 
-    try {
-      const response = await fetch(ApiRoutes.AUTH.FORGOT_PASSWORD, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      })
-
-      const data = await response.json()
-
-      if (response.status === 429) {
-        setRateLimitMessage(data?.message ?? "Too many requests. Please wait before trying again.")
+      if (result.rateLimited) {
+        setRateLimitMessage(result.error ?? "Too many requests. Please wait before trying again.")
         return
       }
 
-      if (!response.ok) {
-        setError(data?.message ?? "Unable to process request.")
+      if (!result.success) {
+        setError(result.error ?? "Unable to process request.")
         return
       }
 
       setIsSuccess(true)
-    } catch {
-      setError("Unable to process request. Please try again.")
-    } finally {
-      setIsPending(false)
-    }
+    })
   }
 
   function handleSendAnother() {
@@ -136,7 +123,7 @@ export default function ForgotPasswordPage() {
           </div>
         </div>
       ) : (
-        <form onSubmit={onSubmit} className="space-y-4" noValidate>
+        <form action={handleSubmit} className="space-y-4" noValidate>
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
