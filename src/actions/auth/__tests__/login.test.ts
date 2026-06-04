@@ -4,8 +4,18 @@ import { AUTH_MESSAGES } from "@/constants/messages"
 import { AuthError } from "next-auth"
 import { signIn } from "@/auth"
 
+jest.mock("nodemailer", () => ({
+  createTransport: jest.fn(() => ({ sendMail: jest.fn() })),
+}))
+
 jest.mock("next-auth", () => ({
   AuthError: class AuthError extends Error {},
+}))
+
+jest.mock("@/lib/db", () => ({
+  db: {
+    user: { findUnique: jest.fn(), create: jest.fn() },
+  },
 }))
 
 jest.mock("@/auth", () => ({
