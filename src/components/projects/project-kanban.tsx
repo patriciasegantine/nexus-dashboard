@@ -1,9 +1,13 @@
 'use client'
 
+import { useState } from "react"
 import { Badge } from "@/components/ui/badge"
-import { Card, CardContent } from "@/components/ui/card"
-import { TASK_STATUS_NAMES, TASK_PRIORITIES_COLORS, TASK_PRIORITY_NAMES, TASK_STATUS_COLUMNS } from "@/constants/task"
-import type { TaskStatus } from "@/types/task"
+import { Button } from "@/components/ui/button"
+import { TaskCard } from "@/components/tasks/task-card"
+import { TaskDialog } from "@/components/tasks/task-dialog"
+import { Plus } from "lucide-react"
+import { TASK_STATUS_NAMES, TASK_STATUS_COLUMNS } from "@/constants/task"
+import type { TaskStatus, TaskCard as TaskCardType } from "@/types/task"
 import type { ProjectWithTasks } from "@/types/project"
 
 interface ProjectKanbanProps {
@@ -11,19 +15,44 @@ interface ProjectKanbanProps {
 }
 
 export function ProjectKanban({ project }: ProjectKanbanProps) {
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [selectedTask, setSelectedTask] = useState<TaskCardType | null>(null)
+
   const tasksByStatus = TASK_STATUS_COLUMNS.reduce((acc, status) => {
     acc[status] = project.tasks.filter((t) => t.status === status)
     return acc
   }, {} as Record<TaskStatus, typeof project.tasks>)
 
+  function handleNewTask() {
+    setSelectedTask(null)
+    setDialogOpen(true)
+  }
+
+  function handleEditTask(task: TaskCardType) {
+    setSelectedTask(task)
+    setDialogOpen(true)
+  }
+
+  function handleDialogClose() {
+    setSelectedTask(null)
+    setDialogOpen(false)
+  }
+
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">{project.name}</h1>
-        {project.description && (
-          <p className="text-muted-foreground">{project.description}</p>
-        )}
-      </div>
+    <>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">{project.name}</h1>
+            {project.description && (
+              <p className="text-muted-foreground">{project.description}</p>
+            )}
+          </div>
+          <Button onClick={handleNewTask} size="sm">
+            <Plus className="h-4 w-4 mr-2" />
+            New task
+          </Button>
+        </div>
 
       {project.tasks.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-24 text-center">
@@ -39,34 +68,26 @@ export function ProjectKanban({ project }: ProjectKanbanProps) {
               </div>
               <div className="space-y-2">
                 {tasksByStatus[status].map((task) => (
-                  <Card
+                  <TaskCard
                     key={task.id}
-                    className="hover:bg-muted/50 transition-colors"
-                  >
-                    <CardContent className="p-3 space-y-2">
-                      <p className="text-sm font-medium line-clamp-2">{task.title}</p>
-                      <div className="flex items-center justify-between">
-                        <Badge
-                          variant="secondary"
-                          className="text-xs"
-                          style={{ backgroundColor: TASK_PRIORITIES_COLORS[task.priority] }}
-                        >
-                          {TASK_PRIORITY_NAMES[task.priority]}
-                        </Badge>
-                        {task.dueDate && (
-                          <span className="text-xs text-muted-foreground">
-                            {new Date(task.dueDate).toLocaleDateString()}
-                          </span>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
+                    task={task}
+                    onClick={() => handleEditTask(task)}
+                    showProject={false}
+                  />
                 ))}
               </div>
             </div>
           ))}
         </div>
       )}
-    </div>
+      </div>
+
+      <TaskDialog
+        open={dialogOpen}
+        onOpenChange={handleDialogClose}
+        projectId={project.id}
+        task={selectedTask || undefined}
+      />
+    </>
   )
 }

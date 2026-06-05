@@ -5,8 +5,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { TagsInput } from "@/components/ui/tags-input"
 import { createProject, updateProject } from "@/actions/projects"
-import { X } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 interface ProjectDialogProps {
@@ -34,23 +34,6 @@ export function ProjectDialog({ open, onOpenChange, project }: ProjectDialogProp
     }
   }, [open, project])
 
-  function addTag() {
-    const value = tagInput.trim().toLowerCase()
-    if (!value || tags.includes(value) || tags.length >= 10) return
-    setTags((prev) => [...prev, value])
-    setTagInput("")
-  }
-
-  function removeTag(tag: string) {
-    setTags((prev) => prev.filter((t) => t !== tag))
-  }
-
-  function handleTagKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === "Enter") {
-      e.preventDefault()
-      addTag()
-    }
-  }
 
   function handleSubmit(formData: FormData) {
     formData.set("tags", JSON.stringify(tags))
@@ -99,47 +82,12 @@ export function ProjectDialog({ open, onOpenChange, project }: ProjectDialogProp
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="tag-input">Tags</Label>
-            <div className="flex gap-2">
-              <Input
-                id="tag-input"
-                value={tagInput}
-                onChange={(e) => setTagInput(e.target.value)}
-                onKeyDown={handleTagKeyDown}
-                placeholder="Add a tag and press Enter"
-                maxLength={30}
-                disabled={tags.length >= 10}
-              />
-              <Button
-                type="button"
-                variant="outline"
-                onClick={addTag}
-                disabled={!tagInput.trim() || tags.length >= 10}
-              >
-                Add
-              </Button>
-            </div>
-            {tags.length > 0 && (
-              <div className="flex flex-wrap gap-1.5 pt-1">
-                {tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-secondary text-secondary-foreground"
-                  >
-                    {tag}
-                    <button
-                      type="button"
-                      onClick={() => removeTag(tag)}
-                      className="text-muted-foreground hover:text-foreground"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </span>
-                ))}
-              </div>
-            )}
-          </div>
+          <TagsInput
+            value={tags}
+            onChange={setTags}
+            inputValue={tagInput}
+            onInputChange={setTagInput}
+          />
 
           {error && (
             <p className="text-sm text-destructive">{error}</p>
