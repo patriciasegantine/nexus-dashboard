@@ -22,7 +22,7 @@ export default async function ProjectsPage() {
           <p className="text-muted-foreground">No projects yet. Create your first one.</p>
         </div>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-4">
           {projects.map((project) => (
             <ProjectCard key={project.id} project={project} />
           ))}

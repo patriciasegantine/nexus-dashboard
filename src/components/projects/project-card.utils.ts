@@ -1,12 +1,12 @@
 export const ACCENT_COLORS = [
-  "bg-blue-500",
-  "bg-violet-500",
-  "bg-emerald-500",
-  "bg-orange-500",
-  "bg-pink-500",
-  "bg-teal-500",
-  "bg-yellow-500",
-  "bg-rose-500",
+  { border: "border-l-blue-400 border-b-blue-400",     avatar: "bg-blue-500" },
+  { border: "border-l-violet-400 border-b-violet-400", avatar: "bg-violet-500" },
+  { border: "border-l-emerald-400 border-b-emerald-400", avatar: "bg-emerald-500" },
+  { border: "border-l-orange-400 border-b-orange-400", avatar: "bg-orange-500" },
+  { border: "border-l-pink-400 border-b-pink-400",     avatar: "bg-pink-500" },
+  { border: "border-l-teal-400 border-b-teal-400",     avatar: "bg-teal-500" },
+  { border: "border-l-yellow-400 border-b-yellow-400", avatar: "bg-yellow-500" },
+  { border: "border-l-rose-400 border-b-rose-400",     avatar: "bg-rose-500" },
 ]
 
 export const TAG_COLORS = [

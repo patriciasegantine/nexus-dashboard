@@ -18,17 +18,17 @@ export interface ProjectCardProps {
 export function ProjectCard({ project }: ProjectCardProps) {
   const [editOpen, setEditOpen] = useState(false)
 
-  const avatarColor = ACCENT_COLORS[colorIndex(project.id, ACCENT_COLORS.length)]
+  const accent = ACCENT_COLORS[colorIndex(project.id, ACCENT_COLORS.length)]
   const barColor = progressColor(project.progress, project.total)
 
   return (
     <>
-      <Card className="hover:bg-muted/50 transition-colors">
+      <Card className={`hover:bg-muted/50 transition-colors border-l-4 border-b-1 ${accent.border}`}>
         <CardContent className="p-4">
           <div className="space-y-3">
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-start gap-3 min-w-0 flex-1">
-                <div className={`${avatarColor} rounded-md h-8 w-8 flex items-center justify-center shrink-0 mt-0.5`}>
+                <div className={`${accent.avatar} rounded-md h-8 w-8 flex items-center justify-center shrink-0 mt-0.5`}>
                   <span className="text-white text-sm font-semibold">
                     {project.name.charAt(0).toUpperCase()}
                   </span>
@@ -58,7 +58,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
               </div>
             </div>
 
-            <div className="space-y-1.5">
+            <div className="space-y-5">
               <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
                 <div
                   className={`h-full rounded-full transition-all ${barColor}`}
