@@ -7,21 +7,24 @@ export interface Task {
   description?: string | null
   status: TaskStatus
   priority: TaskPriority
+  tags: string[]
   projectId: string
   userId: string
-  dueDate?: string | null
-  createdAt: string
-  updatedAt: string
+  dueDate?: Date | null
+  createdAt: Date
+  updatedAt: Date
 }
 
-export interface CreateTaskDTO {
+export type TaskCard = Omit<Task, 'projectId' | 'userId' | 'createdAt' | 'updatedAt'>
+
+export interface RecentTask {
+  id: string
   title: string
-  description?: string
-  priority: TaskPriority
-  projectId: string
-  dueDate?: string
+  status: TaskStatus
+  updatedAt: Date
+  project: { name: string } | null
 }
 
-export interface UpdateTaskDTO extends Partial<CreateTaskDTO> {
-  status?: TaskStatus
+export interface TaskListItem extends TaskCard {
+  project: { id: string; name: string } | null
 }

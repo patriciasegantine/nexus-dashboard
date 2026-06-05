@@ -1,10 +1,6 @@
 import { TaskPriority, TaskStatus } from "@/types/task";
 
-export const TASK_STATUS: Record<TaskStatus, TaskStatus> = {
-  TODO: 'TODO',
-  IN_PROGRESS: 'IN_PROGRESS',
-  DONE: 'DONE'
-} as const
+export const TASK_STATUS_COLUMNS: TaskStatus[] = ['TODO', 'IN_PROGRESS', 'DONE'] as const
 
 export const TASK_STATUS_NAMES: Record<TaskStatus, string> = {
   TODO: 'To Do',
