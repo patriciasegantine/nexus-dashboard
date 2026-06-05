@@ -10,6 +10,14 @@ type ActionResult<T = void> =
   | { success: true; data: T }
   | { success: false; error: string }
 
+function parseTags(formData: FormData): string[] {
+  try {
+    return JSON.parse((formData.get("tags") as string) || "[]")
+  } catch {
+    return []
+  }
+}
+
 export async function createProject(
   formData: FormData
 ): Promise<ActionResult<{ id: string }>> {
@@ -21,6 +29,7 @@ export async function createProject(
   const raw = {
     name: formData.get("name"),
     description: formData.get("description") || undefined,
+    tags: parseTags(formData),
   }
 
   const parsed = createProjectSchema.safeParse(raw)
@@ -32,6 +41,7 @@ export async function createProject(
     data: {
       name: parsed.data.name,
       description: parsed.data.description,
+      tags: parsed.data.tags ?? [],
       userId: session.user.id,
     },
     select: { id: true },
@@ -53,6 +63,7 @@ export async function updateProject(
   const raw = {
     name: formData.get("name") || undefined,
     description: formData.get("description") || undefined,
+    tags: parseTags(formData),
   }
 
   const parsed = updateProjectSchema.safeParse(raw)

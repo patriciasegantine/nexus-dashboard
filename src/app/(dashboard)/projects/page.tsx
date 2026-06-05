@@ -1,10 +1,10 @@
-import { getProjects } from "@/lib/data/projects"
+import { getBoardData } from "@/lib/data/projects"
 import { ProjectCard } from "@/components/projects/project-card"
 import { NewProjectButton } from "@/components/projects/new-project-button"
 import { FolderKanban } from "lucide-react"
 
 export default async function ProjectsPage() {
-  const projects = await getProjects()
+  const projects = await getBoardData()
 
   return (
     <div className="space-y-6">
@@ -22,26 +22,10 @@ export default async function ProjectsPage() {
           <p className="text-muted-foreground">No projects yet. Create your first one.</p>
         </div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {projects.map((project) => {
-            const total = project._count.tasks
-            const done = project.tasks.filter((t) => t.status === "DONE").length
-            const progress = total > 0 ? Math.round((done / total) * 100) : 0
-
-            return (
-              <ProjectCard
-                key={project.id}
-                project={{
-                  id: project.id,
-                  name: project.name,
-                  description: project.description,
-                  total,
-                  done,
-                  progress,
-                }}
-              />
-            )
-          })}
+        <div className="space-y-2">
+          {projects.map((project) => (
+            <ProjectCard key={project.id} project={project} />
+          ))}
         </div>
       )}
     </div>

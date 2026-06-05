@@ -10,6 +10,11 @@ export const createProjectSchema = z.object({
     .string()
     .max(500, "Description must be at most 500 characters")
     .optional(),
+  tags: z
+    .array(z.string().min(1).max(30))
+    .max(10, "Maximum 10 tags allowed")
+    .optional()
+    .default([]),
 })
 
 export const updateProjectSchema = createProjectSchema.partial().refine(

@@ -8,51 +8,11 @@ import Link from "next/link"
 import { AppRoutes } from "@/constants/routes"
 import { ProjectDialog } from "./project-dialog"
 import { DeleteProjectButton } from "./delete-project-button"
+import { ProjectBoardItem } from "@/types/project"
+import { ACCENT_COLORS, TAG_COLORS, colorIndex, progressColor } from "./project-card.utils"
 
-const ACCENT_COLORS = [
-  "bg-blue-500",
-  "bg-violet-500",
-  "bg-emerald-500",
-  "bg-orange-500",
-  "bg-pink-500",
-  "bg-teal-500",
-  "bg-yellow-500",
-  "bg-rose-500",
-]
-
-const TAG_COLORS = [
-  "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300",
-  "bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300",
-  "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300",
-  "bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300",
-  "bg-pink-100 text-pink-700 dark:bg-pink-900/40 dark:text-pink-300",
-]
-
-const MOCK_TAGS = ["frontend", "backend", "design"]
-
-function colorIndex(id: string, length: number) {
-  return id.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0) % length
-}
-
-function progressColor(progress: number, total: number) {
-  if (total === 0 || progress === 0) return "bg-red-500"
-  if (progress < 30) return "bg-red-500"
-  if (progress < 70) return "bg-amber-500"
-  return "bg-emerald-500"
-}
-
-interface ProjectCardProps {
-  project: {
-    id: string
-    name: string
-    description?: string | null
-    total: number
-    todo: number
-    inProgress: number
-    done: number
-    progress: number
-    overdue: number
-  }
+export interface ProjectCardProps {
+  project: ProjectBoardItem
 }
 
 export function ProjectCard({ project }: ProjectCardProps) {
@@ -114,16 +74,18 @@ export function ProjectCard({ project }: ProjectCardProps) {
               </div>
             </div>
 
-            <div className="flex items-center gap-1.5 flex-wrap">
-              {MOCK_TAGS.map((tag, i) => (
-                <span
-                  key={tag}
-                  className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${TAG_COLORS[i % TAG_COLORS.length]}`}
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
+            {project.tags.length > 0 && (
+              <div className="flex items-center gap-1.5 flex-wrap">
+                {project.tags.map((tag, i) => (
+                  <span
+                    key={tag}
+                    className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${TAG_COLORS[i % TAG_COLORS.length]}`}
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -131,7 +93,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
       <ProjectDialog
         open={editOpen}
         onOpenChange={setEditOpen}
-        project={{ id: project.id, name: project.name, description: project.description }}
+        project={project}
       />
     </>
   )
