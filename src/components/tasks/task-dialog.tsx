@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { TagsInput } from "@/components/ui/tags-input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { createTask, updateTask } from "@/actions/tasks"
+import { fetchProjects } from "@/actions/projects"
 import { TASK_PRIORITY_NAMES, TASK_STATUS_NAMES } from "@/constants/task"
 import { useRouter } from "next/navigation"
 import type { TaskCard } from "@/types/task"
@@ -16,7 +17,7 @@ import type { TaskCard } from "@/types/task"
 interface TaskDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  projectId: string
+  projectId?: string
   task?: TaskCard
 }
 
@@ -25,6 +26,8 @@ export function TaskDialog({ open, onOpenChange, projectId, task }: TaskDialogPr
   const router = useRouter()
   const [error, setError] = useState("")
   const [isPending, startTransition] = useTransition()
+  const [projects, setProjects] = useState<{ id: string; name: string }[]>([])
+  const [selectedProjectId, setSelectedProjectId] = useState<string>(projectId || "")
   const [tags, setTags] = useState<string[]>([])
   const [tagInput, setTagInput] = useState("")
   const [priority, setPriority] = useState<string>(task?.priority || "MEDIUM")
@@ -38,14 +41,25 @@ export function TaskDialog({ open, onOpenChange, projectId, task }: TaskDialogPr
       setTagInput("")
       setPriority(task?.priority || "MEDIUM")
       setStatus(task?.status || "TODO")
+      setSelectedProjectId(projectId || "")
       if (!task) {
         formRef.current?.reset()
       }
+
+      // Fetch projects only if not in a project context
+      if (!projectId) {
+        fetchProjects().then(setProjects)
+      }
     }
-  }, [open, task])
+  }, [open, task, projectId])
 
   function handleSubmit(formData: FormData) {
-    formData.set("projectId", projectId)
+    if (!selectedProjectId && !projectId) {
+      setError("Please select a project")
+      return
+    }
+
+    formData.set("projectId", selectedProjectId)
     formData.set("priority", priority)
     formData.set("status", status)
     formData.set("tags", JSON.stringify(tags))
@@ -93,6 +107,24 @@ export function TaskDialog({ open, onOpenChange, projectId, task }: TaskDialogPr
               defaultValue={task?.description ?? ""}
             />
           </div>
+
+          {!projectId && (
+            <div className="space-y-2">
+              <Label htmlFor="project">Project</Label>
+              <Select value={selectedProjectId} onValueChange={setSelectedProjectId}>
+                <SelectTrigger id="project">
+                  <SelectValue placeholder="Select a project" />
+                </SelectTrigger>
+                <SelectContent>
+                  {projects.map((project) => (
+                    <SelectItem key={project.id} value={project.id}>
+                      {project.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">

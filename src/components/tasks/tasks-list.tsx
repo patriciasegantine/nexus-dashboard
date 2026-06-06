@@ -2,12 +2,13 @@
 
 import { TaskCard } from "@/components/tasks/task-card"
 import type { TaskListItem } from "@/types/task"
+
 interface TasksListProps {
   tasks: TaskListItem[]
+  onTaskClick?: (task: TaskListItem) => void
 }
 
-export function TasksList({ tasks }: TasksListProps) {
-
+export function TasksList({ tasks, onTaskClick }: TasksListProps) {
   return (
     <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
       {tasks?.map((task) => (
@@ -15,6 +16,7 @@ export function TasksList({ tasks }: TasksListProps) {
           key={task.id}
           task={task}
           showProject={true}
+          onClick={() => onTaskClick?.(task)}
         />
       ))}
     </div>
