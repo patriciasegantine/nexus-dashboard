@@ -2,7 +2,7 @@
 
 import { DashboardStats } from '@/components/overview/dashboard-stats'
 import { RecentActivities } from '@/components/overview/recent-activities'
-import { WorkItemChart } from '@/components/overview/work-item-chart'
+import { TasksByStatus } from '@/components/overview/tasks-by-status'
 import { PriorityDistribution } from '@/components/overview/priority-distribution'
 
 export default function DashboardPage() {
@@ -18,7 +18,7 @@ export default function DashboardPage() {
       <DashboardStats/>
 
       <div className="grid gap-6 md:grid-cols-2">
-        <WorkItemChart/>
+        <TasksByStatus />
         <PriorityDistribution/>
       </div>
 

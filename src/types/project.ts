@@ -1,3 +1,5 @@
+import type { TaskCard } from './task'
+
 export interface Project {
   id: string
   name: string
@@ -5,10 +7,9 @@ export interface Project {
   tags: string[]
   userId: string
   createdAt: Date
-  updatedAt: Date
 }
 
-export interface ProjectWithStats extends Project {
+export interface ProjectBoardItem extends Omit<Project, 'userId'> {
   total: number
   todo: number
   inProgress: number
@@ -17,6 +18,14 @@ export interface ProjectWithStats extends Project {
   overdue: number
 }
 
-export type ProjectBoardItem = Omit<ProjectWithStats, 'userId' | 'updatedAt'>
+export interface ProjectWithTasks extends Project {
+  tasks: TaskCard[]
+}
 
-export type ProjectFormData = Pick<Project, 'name' | 'description' | 'tags'>
+export interface RecentProject {
+  id: string
+  name: string
+  description?: string | null
+  createdAt: Date
+  _count: { tasks: number }
+}

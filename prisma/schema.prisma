@@ -92,6 +92,7 @@ model Task {
   description String?
   status      Status    @default(TODO)
   priority    Priority  @default(MEDIUM)
+  tags        String[]
   projectId   String
   userId      String
   dueDate     DateTime?

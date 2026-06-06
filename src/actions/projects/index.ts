@@ -89,6 +89,17 @@ export async function updateProject(
   return { success: true, data: undefined }
 }
 
+export async function fetchProjects(): Promise<{ id: string; name: string }[]> {
+  const session = await auth()
+  if (!session?.user?.id) return []
+
+  return db.project.findMany({
+    where: { userId: session.user.id },
+    select: { id: true, name: true },
+    orderBy: { createdAt: "desc" },
+  })
+}
+
 export async function deleteProject(
   projectId: string
 ): Promise<ActionResult<void>> {
