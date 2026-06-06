@@ -58,7 +58,7 @@
         /* Status Colors */
         --status-done: 142.1 76.2% 36.3%;
         --status-in-progress: 221.2 83.2% 53.3%;
-        --status-todo: 215.4 16.3% 46.9%;
+        --status-todo: 38 90% 52%;
 
         /* Priority Colors */
         --priority-high: 0 84.2% 60.2%;
@@ -125,14 +125,14 @@
         --chart-5: 240 5% 15%;
 
         /* Status Colors */
-        --status-done: 142.1 30% 50%;
-        --status-in-progress: 221.2 40% 55%;
-        --status-todo: 215.4 10% 60%;
+        --status-done: 142.1 55% 45%;
+        --status-in-progress: 221.2 70% 60%;
+        --status-todo: 38 80% 55%;
 
         /* Priority Colors */
-        --priority-high: 0 40% 50%;
-        --priority-medium: 48 50% 45%;
-        --priority-low: 142.1 30% 50%;
+        --priority-high: 0 72% 58%;
+        --priority-medium: 48 85% 55%;
+        --priority-low: 142.1 55% 45%;
 
         /* Velocity Colors */
         --velocity-planned: 271 60% 60%;

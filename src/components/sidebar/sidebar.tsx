@@ -23,11 +23,6 @@ const SIDEBAR_ITEMS = [
     icon: LayoutDashboard
   },
   {
-    title: "Board",
-    href: AppRoutes.DASHBOARD.BOARD,
-    icon: KanbanSquare
-  },
-  {
     title: "Projects",
     href: AppRoutes.DASHBOARD.PROJECTS,
     icon: FolderKanban
