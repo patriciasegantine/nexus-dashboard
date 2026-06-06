@@ -88,13 +88,15 @@ export async function updateTask(
   }
 
   const tags = parseTags(formData)
+  const dueDateRaw = formData.get("dueDate") as string | null
   const raw = {
     title: formData.get("title") || undefined,
     description: formData.get("description") || undefined,
     priority: formData.get("priority") || undefined,
     status: formData.get("status") || undefined,
     tags: tags.length > 0 ? tags : undefined,
-    dueDate: formData.get("dueDate") || undefined,
+    projectId: formData.get("projectId") || undefined,
+    dueDate: dueDateRaw !== null ? (dueDateRaw.trim() || null) : undefined,
   }
 
   const parsed = updateTaskSchema.safeParse(raw)
@@ -111,14 +113,30 @@ export async function updateTask(
     return { success: false, error: "Task not found" }
   }
 
+  if (parsed.data.projectId && parsed.data.projectId !== existing.projectId) {
+    const project = await db.project.findUnique({
+      where: { id: parsed.data.projectId, userId: session.user.id },
+      select: { id: true },
+    })
+    if (!project) {
+      return { success: false, error: "Project not found" }
+    }
+  }
+
   await db.task.update({
     where: { id: taskId, userId: session.user.id },
     data: {
       ...parsed.data,
-      dueDate: parsed.data.dueDate ? parseDatetime(parsed.data.dueDate) : undefined,
+      dueDate: parsed.data.dueDate === null
+        ? null
+        : parsed.data.dueDate
+          ? parseDatetime(parsed.data.dueDate)
+          : undefined,
     },
   })
 
+  revalidatePath(AppRoutes.DASHBOARD.HOME)
+  revalidatePath(AppRoutes.DASHBOARD.TASKS)
   revalidatePath(AppRoutes.DASHBOARD.PROJECTS)
   return { success: true, data: undefined }
 }
