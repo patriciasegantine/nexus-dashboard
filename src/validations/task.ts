@@ -27,6 +27,7 @@ export const updateTaskSchema = createTaskSchema
   .omit({ projectId: true })
   .partial()
   .extend({
+    projectId: z.string().min(1).optional(),
     tags: z
       .array(z.string().min(1).max(30))
       .max(10, "Maximum 10 tags allowed")

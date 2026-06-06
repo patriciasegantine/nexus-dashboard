@@ -7,36 +7,38 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { TagsInput } from "@/components/ui/tags-input"
 import { createProject, updateProject } from "@/actions/projects"
-import { useRouter } from "next/navigation"
+import { cn } from "@/lib/utils"
+import { PROJECT_COLORS, DEFAULT_PROJECT_COLOR } from "./project-card.utils"
 
 interface ProjectDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  project?: { id: string; name: string; description?: string | null; tags?: string[] }
+  project?: { id: string; name: string; description?: string | null; color?: string; tags?: string[] }
 }
 
 export function ProjectDialog({ open, onOpenChange, project }: ProjectDialogProps) {
   const isEditing = !!project
-  const router = useRouter()
   const [error, setError] = useState("")
   const [isPending, startTransition] = useTransition()
   const [tags, setTags] = useState<string[]>([])
   const [tagInput, setTagInput] = useState("")
+  const [color, setColor] = useState<string>(DEFAULT_PROJECT_COLOR)
   const formRef = useRef<HTMLFormElement>(null)
 
   useEffect(() => {
     if (open) {
       setTags(project?.tags ?? [])
       setTagInput("")
+      setColor(project?.color ?? DEFAULT_PROJECT_COLOR)
       setError("")
     } else {
       formRef.current?.reset()
     }
   }, [open, project])
 
-
   function handleSubmit(formData: FormData) {
     formData.set("tags", JSON.stringify(tags))
+    formData.set("color", color)
     setError("")
     startTransition(async () => {
       const result = isEditing
@@ -49,7 +51,6 @@ export function ProjectDialog({ open, onOpenChange, project }: ProjectDialogProp
       }
 
       onOpenChange(false)
-      router.refresh()
     })
   }
 
@@ -80,6 +81,27 @@ export function ProjectDialog({ open, onOpenChange, project }: ProjectDialogProp
               placeholder="Optional description"
               defaultValue={project?.description ?? ""}
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label>Color</Label>
+            <div className="flex gap-2">
+              {PROJECT_COLORS.map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  onClick={() => setColor(c)}
+                  className={cn(
+                    "h-7 w-7 rounded-full transition-all",
+                    color === c
+                      ? "ring-2 ring-offset-2 ring-offset-background scale-110"
+                      : "hover:scale-110 opacity-70 hover:opacity-100"
+                  )}
+                  style={{ backgroundColor: c, ...(color === c ? { '--tw-ring-color': c } as React.CSSProperties : {}) }}
+                  aria-label={c}
+                />
+              ))}
+            </div>
           </div>
 
           <TagsInput

@@ -11,7 +11,9 @@ export async function getProjects(): Promise<Project[]> {
     select: {
       id: true,
       name: true,
+      slug: true,
       description: true,
+      color: true,
       tags: true,
       userId: true,
       createdAt: true,
@@ -20,16 +22,18 @@ export async function getProjects(): Promise<Project[]> {
   })
 }
 
-export async function getProject(projectId: string) {
+export async function getProject(slug: string) {
   const session = await auth()
   if (!session?.user?.id) return null
 
-  return db.project.findUnique({
-    where: { id: projectId, userId: session.user.id },
+  return db.project.findFirst({
+    where: { slug, userId: session.user.id },
     select: {
       id: true,
       name: true,
+      slug: true,
       description: true,
+      color: true,
       tags: true,
       userId: true,
       createdAt: true,
@@ -56,7 +60,15 @@ export async function getBoardData(): Promise<ProjectBoardItem[]> {
   const projects = await db.project.findMany({
     where: { userId: session.user.id },
     orderBy: { createdAt: "desc" },
-    include: {
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      description: true,
+      color: true,
+      tags: true,
+      userId: true,
+      createdAt: true,
       tasks: { select: { status: true, priority: true, dueDate: true } },
     },
   })
@@ -74,7 +86,9 @@ export async function getBoardData(): Promise<ProjectBoardItem[]> {
     return {
       id: project.id,
       name: project.name,
+      slug: project.slug,
       description: project.description,
+      color: project.color,
       tags: project.tags,
       createdAt: project.createdAt,
       total,

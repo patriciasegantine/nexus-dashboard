@@ -1,6 +1,7 @@
 import { PrismaClient, Status, Priority } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
 import * as dotenv from 'dotenv'
+import { generateSlug } from '../src/lib/slug'
 
 dotenv.config()
 
@@ -34,7 +35,9 @@ async function main() {
   const marketingProject = await prisma.project.create({
     data: {
       name: 'Marketing Website Redesign',
+      slug: generateSlug('Marketing Website Redesign'),
       description: 'Full redesign of the company marketing site with new brand identity, improved performance, and mobile-first approach.',
+      color: '#3b82f6',
       tags: ['design', 'frontend'],
       userId: user.id,
     },
@@ -43,7 +46,9 @@ async function main() {
   const mobileProject = await prisma.project.create({
     data: {
       name: 'Mobile App MVP',
+      slug: generateSlug('Mobile App MVP'),
       description: 'Cross-platform mobile application for iOS and Android using React Native, targeting the core user journey.',
+      color: '#8b5cf6',
       tags: ['mobile', 'react-native'],
       userId: user.id,
     },
@@ -52,7 +57,9 @@ async function main() {
   const apiProject = await prisma.project.create({
     data: {
       name: 'API Integration',
+      slug: generateSlug('API Integration'),
       description: 'Third-party API integrations for payment processing, email delivery, and analytics data pipeline.',
+      color: '#14b8a6',
       tags: ['backend', 'api'],
       userId: user.id,
     },

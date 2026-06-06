@@ -63,8 +63,10 @@ export async function getDashboardStats(): Promise<DashboardStats | null> {
         select: {
           id: true,
           name: true,
+          slug: true,
           description: true,
           createdAt: true,
+          color: true,
           _count: { select: { tasks: true } },
           tasks: { where: { status: "DONE" }, select: { id: true } },
         },

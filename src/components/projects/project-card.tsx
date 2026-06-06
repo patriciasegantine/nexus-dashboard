@@ -9,7 +9,7 @@ import { AppRoutes } from "@/constants/routes"
 import { ProjectDialog } from "./project-dialog"
 import { DeleteProjectButton } from "./delete-project-button"
 import { ProjectBoardItem } from "@/types/project"
-import { ACCENT_COLORS, TAG_COLORS, colorIndex, progressColor } from "./project-card.utils"
+import { TAG_COLORS, progressColor } from "./project-card.utils"
 
 export interface ProjectCardProps {
   project: ProjectBoardItem
@@ -18,24 +18,29 @@ export interface ProjectCardProps {
 export function ProjectCard({ project }: ProjectCardProps) {
   const [editOpen, setEditOpen] = useState(false)
 
-  const accent = ACCENT_COLORS[colorIndex(project.id, ACCENT_COLORS.length)]
   const barColor = progressColor(project.progress, project.total)
 
   return (
     <>
-      <Card className={`hover:bg-muted/50 transition-colors border-l-4 border-b-1 ${accent.border}`}>
+      <Card
+        className="hover:bg-muted/50 transition-colors border-l-4 border-b-1"
+        style={{ borderLeftColor: project.color }}
+      >
         <CardContent className="p-4">
           <div className="space-y-3">
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-start gap-3 min-w-0 flex-1">
-                <div className={`${accent.avatar} rounded-md h-8 w-8 flex items-center justify-center shrink-0 mt-0.5`}>
+                <div
+                  className="rounded-md h-8 w-8 flex items-center justify-center shrink-0 mt-0.5"
+                  style={{ backgroundColor: project.color }}
+                >
                   <span className="text-white text-sm font-semibold">
                     {project.name.charAt(0).toUpperCase()}
                   </span>
                 </div>
                 <div className="min-w-0">
                   <Link
-                    href={`${AppRoutes.DASHBOARD.PROJECTS}/${project.id}`}
+                    href={`${AppRoutes.DASHBOARD.PROJECTS}/${project.slug}`}
                     className="text-sm font-medium hover:underline"
                   >
                     {project.name}

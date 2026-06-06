@@ -3,7 +3,6 @@ import { DashboardStats } from '@/components/overview/dashboard-stats'
 import { RecentProjects } from '@/components/overview/recent-projects'
 import { PriorityDistribution } from '@/components/overview/priority-distribution'
 import { TasksByStatus } from '@/components/overview/tasks-by-status'
-import { RecentTasksTable } from '@/components/overview/recent-tasks-table'
 import { NewProjectButton } from '@/components/projects/new-project-button'
 import { Rocket } from 'lucide-react'
 
@@ -45,6 +44,8 @@ export default async function DashboardPage() {
         <TasksByStatus byStatus={stats?.byStatus ?? {}} />
         <PriorityDistribution byPriority={stats?.byPriority ?? {}} />
       </div>
+
+      <RecentProjects projects={stats?.recentProjects ?? []} />
     </div>
   )
 }

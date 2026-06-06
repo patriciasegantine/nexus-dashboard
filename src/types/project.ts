@@ -3,7 +3,9 @@ import type { TaskCard } from './task'
 export interface Project {
   id: string
   name: string
+  slug: string
   description?: string | null
+  color: string
   tags: string[]
   userId: string
   createdAt: Date
@@ -27,7 +29,10 @@ export type ProjectFormData = Pick<Project, 'name' | 'description' | 'tags'>
 export interface RecentProject {
   id: string
   name: string
+  slug: string
   description?: string | null
+  color: string
   createdAt: Date
   _count: { tasks: number }
+  doneTasks: number
 }
