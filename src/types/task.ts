@@ -20,10 +20,13 @@ export type TaskCard = Omit<Task, 'projectId' | 'userId' | 'createdAt' | 'update
 export interface RecentTask {
   id: string
   title: string
+  description: string | null
   status: TaskStatus
   priority: TaskPriority
+  tags: string[]
+  dueDate: Date | null
   updatedAt: Date
-  project: { name: string } | null
+  project: { id: string; name: string } | null
 }
 
 export interface TaskListItem extends TaskCard {

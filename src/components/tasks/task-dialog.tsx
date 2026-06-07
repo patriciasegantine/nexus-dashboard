@@ -8,10 +8,11 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { TagsInput } from "@/components/ui/tags-input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { DatePicker } from "@/components/ui/date-picker"
 import { createTask, updateTask } from "@/actions/tasks"
 import { fetchProjects } from "@/actions/projects"
 import { TASK_PRIORITY_NAMES, TASK_STATUS_NAMES } from "@/constants/task"
-import { useRouter } from "next/navigation"
+import { format } from "date-fns"
 import type { TaskCard } from "@/types/task"
 
 interface TaskDialogProps {
@@ -23,7 +24,6 @@ interface TaskDialogProps {
 
 export function TaskDialog({ open, onOpenChange, projectId, task }: TaskDialogProps) {
   const isEditing = !!task
-  const router = useRouter()
   const [error, setError] = useState("")
   const [isPending, startTransition] = useTransition()
   const [projects, setProjects] = useState<{ id: string; name: string }[]>([])
@@ -32,6 +32,9 @@ export function TaskDialog({ open, onOpenChange, projectId, task }: TaskDialogPr
   const [tagInput, setTagInput] = useState("")
   const [priority, setPriority] = useState<string>(task?.priority || "MEDIUM")
   const [status, setStatus] = useState<string>(task?.status || "TODO")
+  const [dueDate, setDueDate] = useState<Date | undefined>(
+    task?.dueDate ? new Date(task.dueDate) : undefined
+  )
   const formRef = useRef<HTMLFormElement>(null)
 
   useEffect(() => {
@@ -41,17 +44,17 @@ export function TaskDialog({ open, onOpenChange, projectId, task }: TaskDialogPr
       setTagInput("")
       setPriority(task?.priority || "MEDIUM")
       setStatus(task?.status || "TODO")
+      setDueDate(task?.dueDate ? new Date(task.dueDate) : undefined)
       setSelectedProjectId(projectId || "")
       if (!task) {
         formRef.current?.reset()
       }
 
-      // Fetch projects only if not in a project context
-      if (!projectId) {
+      if (isEditing || !projectId) {
         fetchProjects().then(setProjects)
       }
     }
-  }, [open, task, projectId])
+  }, [open, task, projectId, isEditing])
 
   function handleSubmit(formData: FormData) {
     if (!selectedProjectId && !projectId) {
@@ -59,10 +62,11 @@ export function TaskDialog({ open, onOpenChange, projectId, task }: TaskDialogPr
       return
     }
 
-    formData.set("projectId", selectedProjectId)
+    formData.set("projectId", selectedProjectId || projectId || "")
     formData.set("priority", priority)
     formData.set("status", status)
     formData.set("tags", JSON.stringify(tags))
+    formData.set("dueDate", dueDate ? format(dueDate, "yyyy-MM-dd") : "")
     setError("")
     startTransition(async () => {
       const result = isEditing
@@ -75,7 +79,6 @@ export function TaskDialog({ open, onOpenChange, projectId, task }: TaskDialogPr
       }
 
       onOpenChange(false)
-      router.refresh()
     })
   }
 
@@ -108,7 +111,7 @@ export function TaskDialog({ open, onOpenChange, projectId, task }: TaskDialogPr
             />
           </div>
 
-          {!projectId && (
+          {(isEditing || !projectId) && (
             <div className="space-y-2">
               <Label htmlFor="project">Project</Label>
               <Select value={selectedProjectId} onValueChange={setSelectedProjectId}>
@@ -154,6 +157,15 @@ export function TaskDialog({ open, onOpenChange, projectId, task }: TaskDialogPr
                 </SelectContent>
               </Select>
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Due date</Label>
+            <DatePicker
+              value={dueDate}
+              onChange={setDueDate}
+              placeholder="Pick a due date"
+            />
           </div>
 
           <TagsInput
