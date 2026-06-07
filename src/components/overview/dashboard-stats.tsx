@@ -21,7 +21,7 @@ function StatCard({ title, value, description, Icon, color }: StatCardProps) {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
+        <CardTitle className="text-xs font-medium text-muted-foreground truncate pr-1">{title}</CardTitle>
         <div
           className="h-8 w-8 rounded-full flex items-center justify-center"
           style={{ backgroundColor: `color-mix(in srgb, ${color} 15%, transparent)` }}
