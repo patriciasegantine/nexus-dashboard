@@ -58,7 +58,7 @@ describe("registerUser", () => {
     expect(result.success).toBe(true)
     expect(signIn).toHaveBeenCalledWith(
       "credentials",
-      expect.objectContaining({ email: "patricia@example.com", redirectTo: "/?welcome=1" })
+      expect.objectContaining({ email: "patricia@example.com", redirectTo: "/" })
     )
   })
 

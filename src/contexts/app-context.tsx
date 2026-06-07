@@ -15,29 +15,29 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined)
 
 export function AppProvider({children}: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<'light' | 'dark' | 'system'>(() => {
-    if (typeof window !== 'undefined') {
-      return (localStorage.getItem('theme') as 'light' | 'dark' | 'system') || 'system'
-    }
-    return 'system'
-  })
-  
-  const [isCollapsed, setIsCollapsed] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('sidebarCollapsed') === 'true'
-    }
-    return false
-  })
+  const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('system')
+  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [mounted, setMounted] = useState(false)
 
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
-  
+
   useEffect(() => {
+    const storedTheme = localStorage.getItem('theme') as 'light' | 'dark' | 'system' | null
+    if (storedTheme) setTheme(storedTheme)
+    const storedCollapsed = localStorage.getItem('sidebarCollapsed')
+    if (storedCollapsed === 'true') setIsCollapsed(true)
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!mounted) return
     localStorage.setItem('theme', theme)
-  }, [theme])
-  
+  }, [theme, mounted])
+
   useEffect(() => {
+    if (!mounted) return
     localStorage.setItem('sidebarCollapsed', String(isCollapsed))
-  }, [isCollapsed])
+  }, [isCollapsed, mounted])
 
   useEffect(() => {
     if (!isMobileSidebarOpen) return

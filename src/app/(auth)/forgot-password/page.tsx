@@ -91,7 +91,7 @@ export default function ForgotPasswordPage() {
       {isSuccess ? (
         <div className="space-y-6">
           <div className="flex flex-col items-center gap-3 py-2">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500/10">
+            <div className="flex h-10 w-12 items-center justify-center rounded-full bg-emerald-500/10">
               <MailCheck className="h-6 w-6 text-emerald-500" />
             </div>
             <div className="space-y-1 text-center">
@@ -108,7 +108,7 @@ export default function ForgotPasswordPage() {
             <Button
               type="button"
               variant="outline"
-              className="w-full h-12"
+              className="w-full h-10"
               disabled={countdown > 0}
               onClick={handleSendAnother}
             >
@@ -116,22 +116,22 @@ export default function ForgotPasswordPage() {
             </Button>
 
             <Link href={AppRoutes.AUTH.LOGIN} className="block">
-              <Button type="button" className="w-full h-12">
+              <Button type="button" className="w-full h-10">
                 Continue to sign in
               </Button>
             </Link>
           </div>
         </div>
       ) : (
-        <form action={handleSubmit} className="space-y-4" noValidate>
-          <div className="space-y-2">
+        <form action={handleSubmit} className="space-y-3" noValidate>
+          <div className="space-y-1">
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
               name="email"
               type="email"
               placeholder="you@example.com"
-              className={cn("h-12", showEmailError && INVALID_INPUT_CLASS)}
+              className={cn("h-10", showEmailError && INVALID_INPUT_CLASS)}
               value={email}
               onChange={(event) => { setEmail(event.target.value); setRateLimitMessage("") }}
               required
@@ -153,7 +153,7 @@ export default function ForgotPasswordPage() {
             </p>
           )}
 
-          <Button type="submit" className="w-full h-12" disabled={isPending || !isEmailValid || !!rateLimitMessage}>
+          <Button type="submit" className="w-full h-10" disabled={isPending || !isEmailValid || !!rateLimitMessage}>
             {isPending ? "Sending..." : "Send reset link"}
           </Button>
         </form>

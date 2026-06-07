@@ -225,7 +225,7 @@ export async function registerUser(
     await signIn("credentials", {
       email,
       password,
-      redirectTo: "/?welcome=1",
+      redirectTo: "/",
     })
     return { success: true, redirectTo: "/?welcome=1" }
   } catch (error) {

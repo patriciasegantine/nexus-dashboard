@@ -31,15 +31,15 @@ export default function LoginPage() {
     <AuthFormShell title="Welcome back" subtitle="Sign in to your account to continue">
 
         {/* Email/Password */}
-        <form action={action} className="space-y-4" noValidate>
-          <div className="space-y-2">
+        <form action={action} className="space-y-3" noValidate>
+          <div className="space-y-1">
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
               name="email"
               type="email"
               placeholder="you@example.com"
-              className={cn("h-12", showEmailError && INVALID_INPUT_CLASS)}
+              className={cn("h-10", showEmailError && INVALID_INPUT_CLASS)}
               value={email}
               onChange={(event) => setEmail(event.target.value)}
               autoComplete="email"
@@ -49,7 +49,7 @@ export default function LoginPage() {
               <p className="text-sm text-destructive">{AUTH_MESSAGES.INVALID_EMAIL}</p>
             )}
           </div>
-          <div className="space-y-2">
+          <div className="space-y-1">
             <Label htmlFor="password">Password</Label>
             <div className="relative">
               <Input
@@ -57,7 +57,7 @@ export default function LoginPage() {
                 name="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="••••••••"
-                className="h-12 pr-11"
+                className="h-10 pr-11"
                 autoComplete="current-password"
                 required
               />
@@ -82,7 +82,7 @@ export default function LoginPage() {
           {state.error && (
             <p className="text-sm text-destructive">{state.error}</p>
           )}
-          <Button type="submit" className="w-full h-12" disabled={isPending || !isEmailValid}>
+          <Button type="submit" className="w-full h-10" disabled={isPending || !isEmailValid}>
             {isPending ? "Signing in..." : "Sign in"}
           </Button>
         </form>

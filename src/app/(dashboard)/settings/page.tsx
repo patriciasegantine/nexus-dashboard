@@ -1,9 +1,17 @@
-'use client'
+import { Separator } from '@/components/ui/separator'
+import { DangerZone } from '@/components/settings/danger-zone'
 
 export default function SettingsPage() {
   return (
     <div className="space-y-6">
-      SettingsPage
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
+        <p className="text-muted-foreground">Manage your account and workspace preferences.</p>
+      </div>
+
+      <Separator />
+
+      <DangerZone />
     </div>
   )
 }

@@ -6,6 +6,7 @@ import { RecentTasksTable } from '@/components/overview/recent-tasks-table'
 import { PriorityDistribution } from '@/components/overview/priority-distribution'
 import { TasksByStatus } from '@/components/overview/tasks-by-status'
 import { NewProjectButton } from '@/components/projects/new-project-button'
+import { SampleDataButton } from '@/components/overview/sample-data-button'
 
 export default async function DashboardPage() {
   const stats = await getDashboardStats()
@@ -31,6 +32,7 @@ export default async function DashboardPage() {
           </div>
           <div className="flex gap-2">
             <NewProjectButton />
+            <SampleDataButton />
           </div>
         </div>
       )}

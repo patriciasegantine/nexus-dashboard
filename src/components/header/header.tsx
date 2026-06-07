@@ -5,14 +5,13 @@ import Image from "next/image"
 import { useSession } from "next-auth/react"
 import { AppRoutes } from "@/constants/routes"
 import { UserNav } from "@/components/header/user-nav"
-import { ThemeToggle } from "@/components/theme/theme-toggle"
 import { Button } from "@/components/ui/button"
 import { Bell, Menu } from "lucide-react"
 import { useApp } from "@/contexts/app-context"
 import { Badge } from "@/components/ui/badge"
 
 export function Header() {
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
   const { toggleMobileSidebar } = useApp()
 
   return (
@@ -35,20 +34,16 @@ export function Header() {
         </div>
 
         <div className="flex items-center gap-2 md:gap-4 min-w-0">
-          {session?.user ? (
-            <>
-              <Button variant="ghost" size="icon" className="relative h-10 w-10" aria-label="Notifications">
-                <Bell className="h-7 w-7" />
-                <Badge className="absolute -right-1 -top-1 h-5 min-w-5 px-1 text-[10px] leading-none">
-                  3
-                </Badge>
-              </Button>
-
-              <UserNav user={session.user} />
-            </>
-          ) : (
-            <ThemeToggle />
+          <Button variant="ghost" size="icon" className="relative h-10 w-10" aria-label="Notifications">
+            <Bell className="h-7 w-7" />
+            <Badge className="absolute -right-1 -top-1 h-5 min-w-5 px-1 text-[10px] leading-none">
+              3
+            </Badge>
+          </Button>
+          {status === 'loading' && (
+            <div className="h-10 w-10 rounded-full bg-muted animate-pulse" />
           )}
+          {status === 'authenticated' && session?.user && <UserNav user={session.user} />}
         </div>
       </div>
     </header>

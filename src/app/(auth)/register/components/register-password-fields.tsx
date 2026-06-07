@@ -40,7 +40,7 @@ export function RegisterPasswordFields({
 
   return (
     <>
-      <div className="space-y-2">
+      <div className="space-y-1">
         <Label htmlFor="password">Password</Label>
         <div className="relative">
           <Input
@@ -49,7 +49,7 @@ export function RegisterPasswordFields({
             type={showPassword ? "text" : "password"}
             placeholder="enter your password"
             className={cn(
-              "h-12 w-full pr-11",
+              "h-10 w-full pr-11",
               passwordInvalid && INVALID_INPUT_CLASS
             )}
             value={password}
@@ -79,7 +79,7 @@ export function RegisterPasswordFields({
         )}
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-1">
         <Label htmlFor="confirmPassword">Confirm password</Label>
         <div className="relative">
           <Input
@@ -88,7 +88,7 @@ export function RegisterPasswordFields({
             type={showConfirmPassword ? "text" : "password"}
             placeholder="confirm your password"
             className={cn(
-              "h-12 pr-11",
+              "h-10 pr-11",
               passwordMismatch && INVALID_INPUT_CLASS
             )}
             value={confirmPassword}

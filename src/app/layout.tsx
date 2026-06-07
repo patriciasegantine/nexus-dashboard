@@ -7,7 +7,6 @@ import { QueryProvider } from "@/providers/query-provider"
 import { AuthProvider } from "@/providers/auth-provider"
 import { ThemeProvider } from '@/components/theme/theme-provider'
 import { AppProvider } from "@/contexts/app-context"
-import { Header } from "@/components/header/header"
 
 const inter = Inter({subsets: ['latin']})
 
@@ -41,10 +40,7 @@ export default function RootLayout({
       <AuthProvider>
         <QueryProvider>
           <AppProvider>
-            <Header/>
-            <main>
-              {children}
-            </main>
+            {children}
           </AppProvider>
           <Toaster/>
         </QueryProvider>

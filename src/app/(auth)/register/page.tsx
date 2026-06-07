@@ -54,14 +54,14 @@ export default function RegisterPage() {
   return (
     <AuthFormShell title="Create an account" subtitle="Enter your details to get started">
 
-        <form action={action} className="space-y-4">
-          <div className="space-y-2">
+        <form action={action} className="space-y-3">
+          <div className="space-y-1">
             <Label htmlFor="name">Name</Label>
             <Input
               id="name"
               name="name"
               placeholder="your name"
-              className={cn("h-12", showNameError && "border-destructive focus-visible:ring-destructive")}
+              className={cn("h-10", showNameError && "border-destructive focus-visible:ring-destructive")}
               value={name}
               onChange={(event) => setName(event.target.value)}
               autoComplete="name"
@@ -72,14 +72,14 @@ export default function RegisterPage() {
               <p className="text-sm text-destructive">Name must be at least 3 characters.</p>
             )}
           </div>
-          <div className="space-y-2">
+          <div className="space-y-1">
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
               name="email"
               type="email"
               placeholder="you@example.com"
-              className={cn("h-12", showEmailError && INVALID_INPUT_CLASS)}
+              className={cn("h-10", showEmailError && INVALID_INPUT_CLASS)}
               value={email}
               onChange={(event) => setEmail(event.target.value)}
               autoComplete="email"
@@ -102,7 +102,7 @@ export default function RegisterPage() {
             <p className="text-sm text-destructive">{state.error}</p>
           )}
 
-          <Button type="submit" className="w-full h-12" disabled={isPending || !canSubmit}>
+          <Button type="submit" className="w-full h-10" disabled={isPending || !canSubmit}>
             {isPending ? "Creating account..." : "Sign up"}
           </Button>
         </form>

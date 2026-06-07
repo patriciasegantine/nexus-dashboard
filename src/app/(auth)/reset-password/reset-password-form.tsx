@@ -67,7 +67,7 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
       subtitle="Choose a new password to continue."
     >
       {!token ? (
-        <div className="space-y-4 text-center">
+        <div className="space-y-3 text-center">
           <p className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">
             This reset link is invalid or has expired.
           </p>
@@ -79,19 +79,19 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
           </Link>
         </div>
       ) : isSuccess ? (
-        <div className="space-y-4">
+        <div className="space-y-3">
           <p className="text-sm text-emerald-600">
             Password reset successful. You can now sign in with your new password.
           </p>
           <Link href={AppRoutes.AUTH.LOGIN}>
-            <Button type="button" className="w-full h-12">
+            <Button type="button" className="w-full h-10">
               Continue to sign in
             </Button>
           </Link>
         </div>
       ) : (
-        <form action={handleSubmit} className="space-y-4" noValidate>
-          <div className="space-y-2">
+        <form action={handleSubmit} className="space-y-3" noValidate>
+          <div className="space-y-1">
             <Label htmlFor="newPassword">New password</Label>
             <div className="relative">
               <Input
@@ -99,7 +99,7 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
                 name="newPassword"
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter your new password"
-                className={cn("h-12 w-full pr-11", passwordInvalid && INVALID_INPUT_CLASS)}
+                className={cn("h-10 w-full pr-11", passwordInvalid && INVALID_INPUT_CLASS)}
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 onFocus={() => setShowRules(true)}
@@ -129,7 +129,7 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
             )}
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-1">
             <Label htmlFor="confirmPassword">Confirm password</Label>
             <div className="relative">
               <Input
@@ -137,7 +137,7 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
                 name="confirmPassword"
                 type={showConfirmPassword ? "text" : "password"}
                 placeholder="Confirm your new password"
-                className={cn("h-12 pr-11", passwordMismatch && INVALID_INPUT_CLASS)}
+                className={cn("h-10 pr-11", passwordMismatch && INVALID_INPUT_CLASS)}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 autoComplete="new-password"
@@ -163,7 +163,7 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
             </p>
           )}
 
-          <Button type="submit" className="w-full h-12" disabled={isPending || !canSubmit}>
+          <Button type="submit" className="w-full h-10" disabled={isPending || !canSubmit}>
             {isPending ? "Updating..." : "Update password"}
           </Button>
         </form>

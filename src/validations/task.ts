@@ -32,6 +32,7 @@ export const updateTaskSchema = createTaskSchema
       .array(z.string().min(1).max(30))
       .max(10, "Maximum 10 tags allowed")
       .optional(),
+    dueDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().nullable(),
   })
   .refine(
     (data) => Object.keys(data).length > 0,

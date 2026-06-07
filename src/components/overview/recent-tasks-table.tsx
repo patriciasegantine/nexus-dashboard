@@ -36,8 +36,8 @@ export function RecentTasksTable({ tasks }: RecentTasksTableProps) {
             View all
           </Link>
         </CardHeader>
-        <CardContent className="p-0">
-          <Table>
+        <CardContent className="p-0 overflow-x-auto">
+          <Table className="min-w-[600px]">
             {table.getRowModel().rows.length > 0 && (
               <TableHeader>
                 {table.getHeaderGroups().map((headerGroup) => (
