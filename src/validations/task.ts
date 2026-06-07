@@ -20,7 +20,7 @@ export const createTaskSchema = z.object({
     .optional()
     .default([]),
   projectId: z.string().min(1, "Project is required"),
-  dueDate: z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/).optional(),
+  dueDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
 })
 
 export const updateTaskSchema = createTaskSchema

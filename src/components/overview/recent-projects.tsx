@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { formatDistanceToNow } from 'date-fns'
+import { FolderKanban } from 'lucide-react'
 import Link from 'next/link'
 import { AppRoutes } from '@/constants/routes'
 import type { RecentProject } from '@/types/project'
@@ -19,7 +20,10 @@ export function RecentProjects({ projects }: RecentProjectsProps) {
       </CardHeader>
       <CardContent className="p-0">
         {projects.length === 0 ? (
-          <p className="text-sm text-muted-foreground text-center py-6">No projects yet.</p>
+          <div className="flex flex-col items-center justify-center gap-2 py-8 text-muted-foreground">
+            <FolderKanban className="h-8 w-8" />
+            <p className="text-sm">No projects yet.</p>
+          </div>
         ) : (
           <div>
             {projects.map((project) => (
@@ -37,7 +41,7 @@ export function RecentProjects({ projects }: RecentProjectsProps) {
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium truncate">{project.name}</p>
                   {project.description && (
-                    <p className="text-xs text-muted-foreground line-clamp-1">{project.description}</p>
+                    <p className="text-xs text-muted-foreground line-clamp-1 truncate">{project.description}</p>
                   )}
                 </div>
 

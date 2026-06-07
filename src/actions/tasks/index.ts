@@ -198,6 +198,8 @@ export async function deleteTask(
     where: { id: taskId, userId: session.user.id },
   })
 
+  revalidatePath(AppRoutes.DASHBOARD.HOME)
+  revalidatePath(AppRoutes.DASHBOARD.TASKS)
   revalidatePath(AppRoutes.DASHBOARD.PROJECTS)
   return { success: true, data: undefined }
 }

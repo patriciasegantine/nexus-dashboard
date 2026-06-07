@@ -57,7 +57,7 @@ export function DashboardStats({ totalTasks, inProgress, completed, overdue }: D
         color={TASK_STATUS_COLORS.IN_PROGRESS}
       />
       <StatCard
-        title="Completed"
+        title="Done"
         value={completed}
         description="tasks done"
         Icon={CheckCircle2}

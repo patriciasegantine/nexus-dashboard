@@ -1,14 +1,14 @@
+import { Rocket } from "lucide-react"
 import { getDashboardStats } from '@/lib/data/dashboard'
 import { DashboardStats } from '@/components/overview/dashboard-stats'
 import { RecentProjects } from '@/components/overview/recent-projects'
+import { RecentTasksTable } from '@/components/overview/recent-tasks-table'
 import { PriorityDistribution } from '@/components/overview/priority-distribution'
 import { TasksByStatus } from '@/components/overview/tasks-by-status'
 import { NewProjectButton } from '@/components/projects/new-project-button'
-import { Rocket } from 'lucide-react'
 
 export default async function DashboardPage() {
   const stats = await getDashboardStats()
-
   const hasNoProjects = (stats?.recentProjects ?? []).length === 0
 
   return (
@@ -29,7 +29,9 @@ export default async function DashboardPage() {
               Create your first project to start tracking tasks and see your progress here.
             </p>
           </div>
-          <NewProjectButton />
+          <div className="flex gap-2">
+            <NewProjectButton />
+          </div>
         </div>
       )}
 
@@ -45,6 +47,7 @@ export default async function DashboardPage() {
         <PriorityDistribution byPriority={stats?.byPriority ?? {}} />
       </div>
 
+      <RecentTasksTable tasks={stats?.recentTasks ?? []} />
       <RecentProjects projects={stats?.recentProjects ?? []} />
     </div>
   )
