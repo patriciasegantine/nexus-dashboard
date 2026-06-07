@@ -2,7 +2,8 @@
 
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
-import { TASK_PRIORITY_NAMES, TASK_PRIORITIES_COLORS, TASK_STATUS_NAMES } from "@/constants/task"
+import { StatusBadge } from "@/components/tasks/status-badge"
+import { PriorityBadge } from "@/components/tasks/priority-badge"
 import type { TaskCard as TaskCardType } from "@/types/task"
 
 interface TaskCardProps {
@@ -18,7 +19,6 @@ export function TaskCard({ task, onClick, showProject = false }: TaskCardProps) 
       onClick={onClick}
     >
       <CardContent className="p-4 flex flex-col h-full gap-3">
-        {/* Title section */}
         <div className="flex-1">
           <p className="font-semibold text-sm leading-tight line-clamp-2 text-foreground">
             {task.title}
@@ -28,20 +28,11 @@ export function TaskCard({ task, onClick, showProject = false }: TaskCardProps) 
           )}
         </div>
 
-        {/* Status and Priority - Symmetric top */}
         <div className="flex items-center justify-between gap-2">
-          <Badge variant="secondary" className="text-xs font-medium">
-            {TASK_STATUS_NAMES[task.status]}
-          </Badge>
-          <Badge
-            className="text-xs font-medium text-white"
-            style={{ backgroundColor: TASK_PRIORITIES_COLORS[task.priority] }}
-          >
-            {TASK_PRIORITY_NAMES[task.priority]}
-          </Badge>
+          <StatusBadge status={task.status} />
+          <PriorityBadge priority={task.priority} />
         </div>
 
-        {/* Tags - if any */}
         {task.tags && task.tags.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mt-auto">
             {task.tags.slice(0, 3).map((tag) => (

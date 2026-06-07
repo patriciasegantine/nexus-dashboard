@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import Link from 'next/link'
 import { AppRoutes } from '@/constants/routes'
 import { TaskDialog } from '@/components/tasks/task-dialog'
+import { ClipboardList } from 'lucide-react'
 import { columns } from './recent-tasks-table.columns'
 import type { RecentTask } from '@/types/task'
 
@@ -37,17 +38,19 @@ export function RecentTasksTable({ tasks }: RecentTasksTableProps) {
         </CardHeader>
         <CardContent className="p-0">
           <Table>
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id} className="bg-muted hover:bg-muted">
-                  {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id} className="text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                      {flexRender(header.column.columnDef.header, header.getContext())}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
+            {table.getRowModel().rows.length > 0 && (
+              <TableHeader>
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={headerGroup.id} className="bg-muted hover:bg-muted">
+                    {headerGroup.headers.map((header) => (
+                      <TableHead key={header.id} className="text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                        {flexRender(header.column.columnDef.header, header.getContext())}
+                      </TableHead>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableHeader>
+            )}
             <TableBody>
               {table.getRowModel().rows.length ? (
                 table.getRowModel().rows.map((row) => (
@@ -65,8 +68,11 @@ export function RecentTasksTable({ tasks }: RecentTasksTableProps) {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground">
-                    No tasks yet.
+                  <TableCell colSpan={columns.length}>
+                    <div className="flex flex-col items-center justify-center gap-2 py-8 text-muted-foreground">
+                      <ClipboardList className="h-8 w-8" />
+                      <p className="text-sm">No tasks yet.</p>
+                    </div>
                   </TableCell>
                 </TableRow>
               )}
