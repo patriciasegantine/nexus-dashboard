@@ -1,8 +1,8 @@
 import { Rocket } from "lucide-react"
 import { getDashboardStats } from '@/lib/data/dashboard'
-import { DashboardStats } from '@/components/overview/dashboard-stats'
+import { DashboardStats } from '@/components/overview/dashboard-stats/dashboard-stats'
 import { RecentProjects } from '@/components/overview/recent-projects'
-import { RecentTasksTable } from '@/components/overview/recent-tasks-table'
+import { RecentTasksTable } from '@/components/overview/recent-tasks/recent-tasks-table'
 import { PriorityDistribution } from '@/components/overview/priority-distribution'
 import { TasksByStatus } from '@/components/overview/tasks-by-status'
 import { NewProjectButton } from '@/components/projects/new-project-button'
@@ -15,7 +15,7 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Overview</h1>
+        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Overview</h1>
         <p className="text-muted-foreground">A summary of your progress and activities</p>
       </div>
 

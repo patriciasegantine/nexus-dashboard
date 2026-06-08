@@ -34,7 +34,7 @@ export function TasksPageClient({ initialTasks }: TasksPageClientProps) {
     <>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Tasks</h1>
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Tasks</h1>
           <p className="text-muted-foreground">All your tasks across projects</p>
         </div>
         <Button size="sm" onClick={handleNewTask}>

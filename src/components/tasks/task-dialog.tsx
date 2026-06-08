@@ -16,7 +16,7 @@ import { fetchProjects } from "@/actions/projects"
 import { TASK_PRIORITY_NAMES, TASK_STATUS_NAMES } from "@/constants/task"
 import { INVALID_INPUT_CLASS } from "@/lib/form-styles"
 import { cn } from "@/lib/utils"
-import { taskSchema, type TaskFormValues } from "@/lib/validators/task"
+import { taskFormSchema as taskSchema, type TaskFormValues } from "@/validations/task"
 import { format } from "date-fns"
 import type { TaskCard } from "@/types/task"
 

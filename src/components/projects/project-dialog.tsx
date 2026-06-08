@@ -1,13 +1,18 @@
 'use client'
 
-import { useEffect, useRef, useState, useTransition } from "react"
+import { useEffect, useState, useTransition } from "react"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
 import { TagsInput } from "@/components/ui/tags-input"
 import { createProject, updateProject } from "@/actions/projects"
 import { cn } from "@/lib/utils"
+import { INVALID_INPUT_CLASS } from "@/lib/form-styles"
+import { projectFormSchema as projectSchema, type ProjectFormValues } from "@/validations/project"
 import { PROJECT_COLORS, DEFAULT_PROJECT_COLOR } from "./project-card.utils"
 
 interface ProjectDialogProps {
@@ -18,35 +23,44 @@ interface ProjectDialogProps {
 
 export function ProjectDialog({ open, onOpenChange, project }: ProjectDialogProps) {
   const isEditing = !!project
-  const [error, setError] = useState("")
+  const [serverError, setServerError] = useState("")
   const [isPending, startTransition] = useTransition()
   const [tags, setTags] = useState<string[]>([])
   const [tagInput, setTagInput] = useState("")
   const [color, setColor] = useState<string>(DEFAULT_PROJECT_COLOR)
-  const formRef = useRef<HTMLFormElement>(null)
+
+  const { register, handleSubmit, formState: { errors }, reset } = useForm<ProjectFormValues>({
+    resolver: zodResolver(projectSchema),
+  })
 
   useEffect(() => {
     if (open) {
+      reset({
+        name: project?.name ?? "",
+        description: project?.description ?? "",
+      })
       setTags(project?.tags ?? [])
       setTagInput("")
       setColor(project?.color ?? DEFAULT_PROJECT_COLOR)
-      setError("")
-    } else {
-      formRef.current?.reset()
+      setServerError("")
     }
-  }, [open, project])
+  }, [open, project, reset])
 
-  function handleSubmit(formData: FormData) {
+  function onSubmit(data: ProjectFormValues) {
+    const formData = new FormData()
+    formData.set("name", data.name)
+    formData.set("description", data.description ?? "")
     formData.set("tags", JSON.stringify(tags))
     formData.set("color", color)
-    setError("")
+
+    setServerError("")
     startTransition(async () => {
       const result = isEditing
         ? await updateProject(project.id, formData)
         : await createProject(formData)
 
       if (!result.success) {
-        setError(result.error)
+        setServerError(result.error)
         return
       }
 
@@ -61,25 +75,27 @@ export function ProjectDialog({ open, onOpenChange, project }: ProjectDialogProp
           <DialogTitle>{isEditing ? "Edit project" : "New project"}</DialogTitle>
         </DialogHeader>
 
-        <form ref={formRef} action={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="name">Name</Label>
             <Input
               id="name"
-              name="name"
               placeholder="Project name"
-              defaultValue={project?.name}
-              required
+              className={cn(errors.name && INVALID_INPUT_CLASS)}
+              {...register("name")}
             />
+            {errors.name && (
+              <p className="text-xs text-destructive">{errors.name.message}</p>
+            )}
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="description">Description</Label>
-            <Input
+            <Textarea
               id="description"
-              name="description"
               placeholder="Optional description"
-              defaultValue={project?.description ?? ""}
+              rows={3}
+              {...register("description")}
             />
           </div>
 
@@ -111,8 +127,8 @@ export function ProjectDialog({ open, onOpenChange, project }: ProjectDialogProp
             onInputChange={setTagInput}
           />
 
-          {error && (
-            <p className="text-sm text-destructive">{error}</p>
+          {serverError && (
+            <p className="text-sm text-destructive">{serverError}</p>
           )}
 
           <div className="flex justify-end gap-2 pt-2">

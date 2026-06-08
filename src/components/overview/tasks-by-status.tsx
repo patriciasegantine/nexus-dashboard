@@ -27,7 +27,7 @@ export function TasksByStatus({ byStatus }: TasksByStatusProps) {
   const isEmpty = data.length === 0
 
   return (
-    <Card className="overflow-hidden">
+    <Card>
       <CardHeader>
         <CardTitle>Tasks by Status</CardTitle>
       </CardHeader>
@@ -38,8 +38,8 @@ export function TasksByStatus({ byStatus }: TasksByStatusProps) {
             <p className="text-sm">No data yet</p>
           </div>
         ) : (
-          <ChartContainer config={chartConfig} className="h-[200px] sm:h-[300px] w-full">
-            <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+          <ChartContainer config={chartConfig} className="aspect-auto h-[200px] sm:h-[300px] w-full">
+            <BarChart data={data} margin={{ top: 8, right: 16, left: -10, bottom: 0 }}>
               <CartesianGrid vertical={false} />
               <XAxis dataKey="label" tickLine={false} axisLine={false} />
               <YAxis tickLine={false} axisLine={false} allowDecimals={false} />
