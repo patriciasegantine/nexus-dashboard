@@ -1,6 +1,8 @@
 'use client'
 
-import { useEffect, useRef, useState, useTransition } from "react"
+import { useEffect, useState, useTransition } from "react"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -12,6 +14,9 @@ import { DatePicker } from "@/components/ui/date-picker"
 import { createTask, updateTask } from "@/actions/tasks"
 import { fetchProjects } from "@/actions/projects"
 import { TASK_PRIORITY_NAMES, TASK_STATUS_NAMES } from "@/constants/task"
+import { INVALID_INPUT_CLASS } from "@/lib/form-styles"
+import { cn } from "@/lib/utils"
+import { taskFormSchema as taskSchema, type TaskFormValues } from "@/validations/task"
 import { format } from "date-fns"
 import type { TaskCard } from "@/types/task"
 
@@ -24,10 +29,9 @@ interface TaskDialogProps {
 
 export function TaskDialog({ open, onOpenChange, projectId, task }: TaskDialogProps) {
   const isEditing = !!task
-  const [error, setError] = useState("")
+  const [serverError, setServerError] = useState("")
   const [isPending, startTransition] = useTransition()
   const [projects, setProjects] = useState<{ id: string; name: string }[]>([])
-  const [selectedProjectId, setSelectedProjectId] = useState<string>(projectId || "")
   const [tags, setTags] = useState<string[]>([])
   const [tagInput, setTagInput] = useState("")
   const [priority, setPriority] = useState<string>(task?.priority || "MEDIUM")
@@ -35,46 +39,51 @@ export function TaskDialog({ open, onOpenChange, projectId, task }: TaskDialogPr
   const [dueDate, setDueDate] = useState<Date | undefined>(
     task?.dueDate ? new Date(task.dueDate) : undefined
   )
-  const formRef = useRef<HTMLFormElement>(null)
+
+  const { register, handleSubmit, formState: { errors }, reset, setValue, watch } = useForm<TaskFormValues>({
+    resolver: zodResolver(taskSchema),
+  })
+
+  const selectedProjectId = watch("projectId") ?? ""
 
   useEffect(() => {
     if (open) {
-      setError("")
+      reset({
+        title: task?.title ?? "",
+        description: task?.description ?? "",
+        projectId: projectId ?? "",
+      })
+      setServerError("")
       setTags(task?.tags ?? [])
       setTagInput("")
       setPriority(task?.priority || "MEDIUM")
       setStatus(task?.status || "TODO")
       setDueDate(task?.dueDate ? new Date(task.dueDate) : undefined)
-      setSelectedProjectId(projectId || "")
-      if (!task) {
-        formRef.current?.reset()
-      }
 
       if (isEditing || !projectId) {
         fetchProjects().then(setProjects)
       }
     }
-  }, [open, task, projectId, isEditing])
+  }, [open, task, projectId, isEditing, reset])
 
-  function handleSubmit(formData: FormData) {
-    if (!selectedProjectId && !projectId) {
-      setError("Please select a project")
-      return
-    }
-
-    formData.set("projectId", selectedProjectId || projectId || "")
+  function onSubmit(data: TaskFormValues) {
+    const formData = new FormData()
+    formData.set("title", data.title)
+    formData.set("description", data.description ?? "")
+    formData.set("projectId", data.projectId)
     formData.set("priority", priority)
     formData.set("status", status)
     formData.set("tags", JSON.stringify(tags))
     formData.set("dueDate", dueDate ? format(dueDate, "yyyy-MM-dd") : "")
-    setError("")
+
+    setServerError("")
     startTransition(async () => {
       const result = isEditing
         ? await updateTask(task.id, formData)
         : await createTask(formData)
 
       if (!result.success) {
-        setError(result.error)
+        setServerError(result.error)
         return
       }
 
@@ -89,33 +98,37 @@ export function TaskDialog({ open, onOpenChange, projectId, task }: TaskDialogPr
           <DialogTitle>{isEditing ? "Edit task" : "New task"}</DialogTitle>
         </DialogHeader>
 
-        <form ref={formRef} action={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="title">Title</Label>
             <Input
               id="title"
-              name="title"
               placeholder="Task title"
-              defaultValue={task?.title}
-              required
+              className={cn(errors.title && INVALID_INPUT_CLASS)}
+              {...register("title")}
             />
+            {errors.title && (
+              <p className="text-xs text-destructive">{errors.title.message}</p>
+            )}
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="description">Description</Label>
             <Textarea
               id="description"
-              name="description"
               placeholder="Optional description"
-              defaultValue={task?.description ?? ""}
+              {...register("description")}
             />
           </div>
 
           {(isEditing || !projectId) && (
             <div className="space-y-2">
               <Label htmlFor="project">Project</Label>
-              <Select value={selectedProjectId} onValueChange={setSelectedProjectId}>
-                <SelectTrigger id="project">
+              <Select
+                value={selectedProjectId}
+                onValueChange={(value) => setValue("projectId", value, { shouldValidate: true })}
+              >
+                <SelectTrigger id="project" className={cn(errors.projectId && INVALID_INPUT_CLASS)}>
                   <SelectValue placeholder="Select a project" />
                 </SelectTrigger>
                 <SelectContent>
@@ -126,6 +139,9 @@ export function TaskDialog({ open, onOpenChange, projectId, task }: TaskDialogPr
                   ))}
                 </SelectContent>
               </Select>
+              {errors.projectId && (
+                <p className="text-xs text-destructive">{errors.projectId.message}</p>
+              )}
             </div>
           )}
 
@@ -175,8 +191,8 @@ export function TaskDialog({ open, onOpenChange, projectId, task }: TaskDialogPr
             onInputChange={setTagInput}
           />
 
-          {error && (
-            <p className="text-sm text-destructive">{error}</p>
+          {serverError && (
+            <p className="text-sm text-destructive">{serverError}</p>
           )}
 
           <div className="flex justify-end gap-2 pt-2">

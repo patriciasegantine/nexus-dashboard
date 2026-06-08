@@ -16,7 +16,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <Sidebar />
         <main
           className={cn(
-            "flex-1 transition-all duration-300 ease-in-out",
+            "flex-1 min-w-0 transition-all duration-300 ease-in-out",
             isCollapsed
               ? "md:ml-[70px]"
               : "md:ml-64"

@@ -34,7 +34,7 @@ export function PriorityDistribution({ byPriority = {} }: PriorityDistributionPr
   const isEmpty = data.length === 0
 
   return (
-    <Card>
+    <Card className="overflow-hidden">
       <CardHeader>
         <CardTitle>Priority Distribution</CardTitle>
       </CardHeader>
@@ -45,7 +45,7 @@ export function PriorityDistribution({ byPriority = {} }: PriorityDistributionPr
             <p className="text-sm">No data yet</p>
           </div>
         ) : (
-          <ChartContainer config={chartConfig} className="h-[300px] w-full">
+          <ChartContainer config={chartConfig} className="aspect-auto h-[240px] sm:h-[300px] w-full">
             <PieChart>
               <ChartTooltip content={<ChartTooltipContent nameKey="priority" indicator="dot" />} />
               <Pie

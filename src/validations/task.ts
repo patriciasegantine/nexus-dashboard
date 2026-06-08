@@ -46,3 +46,12 @@ export const updateTaskStatusSchema = z.object({
 export type CreateTaskInput = z.infer<typeof createTaskSchema>
 export type UpdateTaskInput = z.infer<typeof updateTaskSchema>
 export type UpdateTaskStatusInput = z.infer<typeof updateTaskStatusSchema>
+
+// Form schema (client-side)
+export const taskFormSchema = z.object({
+  title: z.string().min(1, "Task title is required").max(200),
+  description: z.string().max(1000).optional(),
+  projectId: z.string().min(1, "Please select a project"),
+})
+
+export type TaskFormValues = z.infer<typeof taskFormSchema>

@@ -14,7 +14,7 @@ export function StatusBadge({ status }: StatusBadgeProps) {
 
   return (
     <span
-      className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold"
+      className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold whitespace-nowrap"
       style={{ backgroundColor: TASK_STATUS_COLORS[status] + opacity }}
     >
       {TASK_STATUS_NAMES[status]}

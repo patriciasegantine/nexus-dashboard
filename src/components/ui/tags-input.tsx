@@ -1,9 +1,11 @@
 'use client'
 
 import { useRef } from 'react'
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Tag } from '@/components/ui/tag'
+
+const MAX_TAGS = 5
 
 interface TagsInputProps {
   label?: string
@@ -21,10 +23,11 @@ export function TagsInput({
   onInputChange,
 }: TagsInputProps) {
   const inputRef = useRef<HTMLInputElement>(null)
+  const isAtLimit = value.length >= MAX_TAGS
 
   function addTag() {
     const newTag = inputValue.trim().toLowerCase()
-    if (!newTag || value.includes(newTag) || value.length >= 10) return
+    if (!newTag || value.includes(newTag) || isAtLimit) return
     onChange([...value, newTag])
     onInputChange('')
     inputRef.current?.focus()
@@ -44,42 +47,23 @@ export function TagsInput({
   return (
     <div className="space-y-2">
       <Label htmlFor="tag-input">{label}</Label>
-      <div className="flex gap-2">
-        <Input
-          ref={inputRef}
-          id="tag-input"
-          value={inputValue}
-          onChange={(e) => onInputChange(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Add a tag and press Enter"
-          maxLength={30}
-          disabled={value.length >= 10}
-        />
-        <Button
-          type="button"
-          variant="outline"
-          onClick={addTag}
-          disabled={!inputValue.trim() || value.length >= 10}
-        >
-          Add
-        </Button>
-      </div>
+      <Input
+        ref={inputRef}
+        id="tag-input"
+        value={inputValue}
+        onChange={(e) => onInputChange(e.target.value)}
+        onKeyDown={handleKeyDown}
+        placeholder="Add a tag and press Enter"
+        maxLength={30}
+        disabled={isAtLimit}
+      />
+      {isAtLimit && (
+        <p className="text-xs text-muted-foreground">Maximum {MAX_TAGS} tags reached</p>
+      )}
       {value.length > 0 && (
         <div className="flex flex-wrap gap-1.5 pt-1">
           {value.map((tag) => (
-            <span
-              key={tag}
-              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-secondary text-secondary-foreground"
-            >
-              {tag}
-              <button
-                type="button"
-                onClick={() => removeTag(tag)}
-                className="text-muted-foreground hover:text-foreground"
-              >
-                ✕
-              </button>
-            </span>
+            <Tag key={tag} label={tag} onRemove={() => removeTag(tag)} />
           ))}
         </div>
       )}
