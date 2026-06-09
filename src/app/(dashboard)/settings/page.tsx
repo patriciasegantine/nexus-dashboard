@@ -1,5 +1,6 @@
 import { Separator } from '@/components/ui/separator'
 import { DangerZone } from '@/components/settings/danger-zone'
+import { ProfileSettings } from '@/components/settings/profile-settings'
 
 export default function SettingsPage() {
   return (
@@ -10,7 +11,8 @@ export default function SettingsPage() {
       </div>
 
       <Separator />
-
+      <ProfileSettings />
+      <Separator />
       <DangerZone />
     </div>
   )
