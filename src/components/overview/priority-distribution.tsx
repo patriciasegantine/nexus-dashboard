@@ -47,7 +47,7 @@ export function PriorityDistribution({ byPriority = {} }: PriorityDistributionPr
         ) : (
           <ChartContainer config={chartConfig} className="aspect-auto h-[240px] sm:h-[300px] w-full">
             <PieChart>
-              <ChartTooltip content={<ChartTooltipContent nameKey="priority" indicator="dot" />} />
+              <ChartTooltip content={<ChartTooltipContent nameKey="priority" indicator="dot" hideLabel />} />
               <Pie
                 data={data}
                 dataKey="value"

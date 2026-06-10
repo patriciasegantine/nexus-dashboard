@@ -2,7 +2,7 @@
 
 import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from 'recharts'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart'
+import { ChartContainer, ChartTooltip, type ChartConfig } from '@/components/ui/chart'
 import { TASK_STATUS_COLORS, TASK_STATUS_NAMES } from "@/constants/task"
 import { BarChart2 } from 'lucide-react'
 
@@ -43,8 +43,26 @@ export function TasksByStatus({ byStatus }: TasksByStatusProps) {
               <CartesianGrid vertical={false} />
               <XAxis dataKey="label" tickLine={false} axisLine={false} />
               <YAxis tickLine={false} axisLine={false} allowDecimals={false} />
-              <ChartTooltip content={<ChartTooltipContent nameKey="status" indicator="dot" />} />
-              <Bar dataKey="value" radius={[4, 4, 0, 0]}>
+              <ChartTooltip
+                cursor={false}
+                content={({ payload }) => {
+                  if (!payload?.length) return null
+                  const item = payload[0]
+                  const status = item.payload.status as keyof typeof TASK_STATUS_COLORS
+                  const color = TASK_STATUS_COLORS[status]
+                  const label = TASK_STATUS_NAMES[status as keyof typeof TASK_STATUS_NAMES]
+                  return (
+                    <div className="rounded-lg border bg-background p-2 shadow-sm text-sm">
+                      <div className="flex items-center gap-2">
+                        <div className="h-2.5 w-2.5 rounded-full shrink-0" style={{ backgroundColor: color }} />
+                        <span className="text-muted-foreground">{label}</span>
+                        <span className="ml-auto font-medium">{String(item.value)}</span>
+                      </div>
+                    </div>
+                  )
+                }}
+              />
+              <Bar dataKey="value" radius={[4, 4, 0, 0]} activeBar={false}>
                 {data.map((entry) => (
                   <Cell
                     key={entry.status}
