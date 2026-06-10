@@ -32,8 +32,11 @@ export const { handlers, auth, signIn } = NextAuth({
     }),
   ],
   callbacks: {
-    jwt({ token, user }) {
+    jwt({ token, user, trigger, session: sessionData }) {
       if (user) token.id = user.id
+      if (trigger === 'update' && sessionData?.name) {
+        token.name = sessionData.name as string
+      }
       return token
     },
     session({ session, token }) {
