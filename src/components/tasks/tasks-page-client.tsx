@@ -1,22 +1,14 @@
 'use client'
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
+import { useState, useTransition } from "react"
+import { Loader2 } from "lucide-react"
 import { TasksList } from "@/components/tasks/tasks-list"
 import { TaskDialog } from "@/components/tasks/task-dialog"
 import { TaskFilters } from "@/components/tasks/task-filters"
 import { TaskPagination } from "@/components/tasks/task-pagination"
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
-import { ClipboardList, Plus } from "lucide-react"
+import { TasksPageHeader } from "@/components/tasks/tasks-page-header"
+import { TasksEmptyState } from "@/components/tasks/tasks-empty-state"
+import { TaskDeleteDialog } from "@/components/tasks/task-delete-dialog"
 import { duplicateTask, deleteTask } from "@/actions/tasks"
 import { toast } from "@/hooks/use-toast"
 import type { TaskListItem } from "@/types/task"
@@ -35,6 +27,7 @@ export function TasksPageClient({ tasks, total, projects, page, perPage, hasFilt
   const [dialogOpen, setDialogOpen] = useState(false)
   const [selectedTask, setSelectedTask] = useState<TaskListItem | null>(null)
   const [taskToDelete, setTaskToDelete] = useState<TaskListItem | null>(null)
+  const [isDuplicating, startDuplicate] = useTransition()
 
   function handleNewTask() {
     setSelectedTask(null)
@@ -51,13 +44,15 @@ export function TasksPageClient({ tasks, total, projects, page, perPage, hasFilt
     setDialogOpen(false)
   }
 
-  async function handleDuplicate(task: TaskListItem) {
-    const result = await duplicateTask(task.id)
-    if (result.success) {
-      toast({ title: "Task duplicated successfully." })
-    } else {
-      toast({ title: result.error, variant: "destructive" })
-    }
+  function handleDuplicate(task: TaskListItem) {
+    startDuplicate(async () => {
+      const result = await duplicateTask(task.id)
+      if (result.success) {
+        toast({ title: "Task duplicated successfully." })
+      } else {
+        toast({ title: result.error, variant: "destructive" })
+      }
+    })
   }
 
   async function handleConfirmDelete() {
@@ -74,43 +69,26 @@ export function TasksPageClient({ tasks, total, projects, page, perPage, hasFilt
 
   return (
     <div className="flex flex-col gap-6 min-h-[calc(100vh-8rem)]">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Tasks</h1>
-          <p className="text-muted-foreground">All your tasks across projects</p>
-        </div>
-        <Button size="sm" onClick={handleNewTask}>
-          <Plus className="h-4 w-4 mr-2" />
-          New task
-        </Button>
-      </div>
+      <TasksPageHeader onNewTask={handleNewTask} />
 
       <TaskFilters projects={projects} />
 
       <hr className="border-border/60 -mt-2" />
 
-      <div className="flex-1">
-        {tasks.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full min-h-[20rem] text-center">
-            <ClipboardList className="h-12 w-12 text-muted-foreground mb-4" />
-            {hasFilters ? (
-              <p className="text-muted-foreground">No tasks match your filters.</p>
-            ) : (
-              <>
-                <p className="text-muted-foreground mb-4">No tasks yet. Create your first one.</p>
-                <Button size="sm" onClick={handleNewTask}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  New task
-                </Button>
-              </>
-            )}
+      <div className="flex-1 relative">
+        {isDuplicating && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/60 backdrop-blur-[1px] rounded-lg">
+            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
           </div>
+        )}
+        {tasks.length === 0 ? (
+          <TasksEmptyState hasFilters={hasFilters} onNewTask={handleNewTask} />
         ) : (
           <TasksList
             tasks={tasks}
             onTaskClick={handleEditTask}
             onDuplicate={handleDuplicate}
-            onDelete={(task) => setTaskToDelete(task)}
+            onDelete={setTaskToDelete}
           />
         )}
       </div>
@@ -124,27 +102,11 @@ export function TasksPageClient({ tasks, total, projects, page, perPage, hasFilt
         task={selectedTask || undefined}
       />
 
-      <AlertDialog open={!!taskToDelete} onOpenChange={(open) => !open && setTaskToDelete(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete task</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete{" "}
-              <span className="font-medium text-foreground">&ldquo;{taskToDelete?.title}&rdquo;</span>?{" "}
-              This action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleConfirmDelete}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <TaskDeleteDialog
+        task={taskToDelete}
+        onClose={() => setTaskToDelete(null)}
+        onConfirm={handleConfirmDelete}
+      />
     </div>
   )
 }
