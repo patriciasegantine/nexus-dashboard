@@ -15,7 +15,7 @@ import type { TaskListItem } from "@/types/task"
 interface TaskDeleteDialogProps {
   task: TaskListItem | null
   onClose: () => void
-  onConfirm: () => void
+  onConfirm: (taskId: string) => void
 }
 
 export function TaskDeleteDialog({ task, onClose, onConfirm }: TaskDeleteDialogProps) {
@@ -41,7 +41,7 @@ export function TaskDeleteDialog({ task, onClose, onConfirm }: TaskDeleteDialogP
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
-            onClick={onConfirm}
+            onClick={() => task && onConfirm(task.id)}
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           >
             Delete
