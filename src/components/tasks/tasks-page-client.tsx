@@ -6,13 +6,15 @@ import { TasksList } from "@/components/tasks/tasks-list"
 import { TaskDialog } from "@/components/tasks/task-dialog"
 import { TaskFilters } from "@/components/tasks/task-filters"
 import { TaskPagination } from "@/components/tasks/task-pagination"
-import { TasksPageHeader } from "@/components/tasks/tasks-page-header"
 import { TasksEmptyState } from "@/components/tasks/tasks-empty-state"
 import { TaskDeleteDialog } from "@/components/tasks/task-delete-dialog"
+import { PageHeader } from "@/components/ui/page-header"
+import { Button } from "@/components/ui/button"
 import { duplicateTask, deleteTask } from "@/actions/tasks"
 import { toast } from "@/hooks/use-toast"
 import type { TaskListItem } from "@/types/task"
 import type { Project } from "@/types/project"
+import { Plus } from "lucide-react"
 
 interface TasksPageClientProps {
   tasks: TaskListItem[]
@@ -55,9 +57,7 @@ export function TasksPageClient({ tasks, total, projects, page, perPage, hasFilt
     })
   }
 
-  async function handleConfirmDelete() {
-    if (!taskToDelete) return
-    const id = taskToDelete.id
+  async function handleConfirmDelete(id: string) {
     setTaskToDelete(null)
     const result = await deleteTask(id)
     if (result.success) {
@@ -69,7 +69,16 @@ export function TasksPageClient({ tasks, total, projects, page, perPage, hasFilt
 
   return (
     <div className="flex flex-col gap-6 min-h-[calc(100vh-8rem)]">
-      <TasksPageHeader onNewTask={handleNewTask} />
+      <PageHeader
+        title="Tasks"
+        description="All your tasks across projects"
+        action={
+          <Button size="sm" onClick={handleNewTask}>
+            <Plus className="h-4 w-4 mr-2" />
+            New task
+          </Button>
+        }
+      />
 
       <TaskFilters projects={projects} />
 
