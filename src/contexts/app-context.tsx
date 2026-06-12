@@ -18,8 +18,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    const storedCollapsed = localStorage.getItem('sidebarCollapsed')
-    if (storedCollapsed === 'true') setIsCollapsed(true)
+    const saved = localStorage.getItem('sidebarCollapsed')
+    if (saved === 'true') setIsCollapsed(true)
     setMounted(true)
   }, [])
 

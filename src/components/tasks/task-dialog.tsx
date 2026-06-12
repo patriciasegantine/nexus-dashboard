@@ -91,8 +91,17 @@ export function TaskDialog({ open, onOpenChange, projectId, task }: TaskDialogPr
     })
   }
 
+  function handleOpenChange(val: boolean) {
+    if (!val) {
+      setTimeout(() => {
+        document.body.style.pointerEvents = ''
+      }, 0)
+    }
+    onOpenChange(val)
+  }
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{isEditing ? "Edit task" : "New task"}</DialogTitle>

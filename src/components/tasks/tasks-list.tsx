@@ -6,9 +6,11 @@ import type { TaskListItem } from "@/types/task"
 interface TasksListProps {
   tasks: TaskListItem[]
   onTaskClick?: (task: TaskListItem) => void
+  onDuplicate?: (task: TaskListItem) => void
+  onDelete?: (task: TaskListItem) => void
 }
 
-export function TasksList({ tasks, onTaskClick }: TasksListProps) {
+export function TasksList({ tasks, onTaskClick, onDuplicate, onDelete }: TasksListProps) {
   return (
     <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
       {tasks?.map((task) => (
@@ -17,6 +19,9 @@ export function TasksList({ tasks, onTaskClick }: TasksListProps) {
           task={task}
           showProject={true}
           onClick={() => onTaskClick?.(task)}
+          onEdit={() => onTaskClick?.(task)}
+          onDuplicate={() => onDuplicate?.(task)}
+          onDelete={() => onDelete?.(task)}
         />
       ))}
     </div>

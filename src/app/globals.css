@@ -3,47 +3,50 @@
 @tailwind utilities;
 @layer base {
     :root {
-        /* Base Colours */
-        --background: 0 0% 98%;
-        --foreground: 240 5% 15%;
+        /* Base Colours — Zinc */
+        --background: 240 4.8% 98%;
+        --foreground: 240 10% 3.9%;
+
+        /* App Chrome Colours */
+        --chrome: 240 4.8% 97%;
 
         /* Neutral White */
         --neutral-white: 0 0% 95%;
 
-        /* Card Colours */
-        --card: 0 0% 98%;
-        --card-foreground: 240 5% 15%;
+        /* Card Colours — white cards on a subtle zinc background */
+        --card: 0 0% 100%;
+        --card-foreground: 240 10% 3.9%;
 
         /* Popover Colours */
-        --popover: 0 0% 97%;
-        --popover-foreground: 240 5% 20%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 240 10% 3.9%;
 
         /* Primary Colours */
-        --primary: 240 5% 20%;
+        --primary: 240 5.9% 10%;
         --primary-foreground: 0 0% 98%;
 
         /* Secondary Colours */
-        --secondary: 240 5% 90%;
-        --secondary-foreground: 240 5% 20%;
+        --secondary: 240 4.8% 95.9%;
+        --secondary-foreground: 240 5.9% 10%;
 
         /* Muted Colours */
-        --muted: 240 5% 90%;
-        --muted-foreground: 240 5% 50%;
+        --muted: 240 4.8% 95.9%;
+        --muted-foreground: 240 3.8% 46.1%;
 
         /* Accent Colours */
-        --accent: 240 5% 90%;
-        --accent-foreground: 240 5% 20%;
+        --accent: 240 4.8% 95.9%;
+        --accent-foreground: 240 5.9% 10%;
 
         /* Destructive Colours */
-        --destructive: 0 60% 50%;
+        --destructive: 0 72.2% 50.6%;
         --destructive-foreground: 0 0% 98%;
 
         /* Border and Input Colours */
-        --border: 240 5% 85%;
-        --input: 240 5% 85%;
+        --border: 240 5.9% 90%;
+        --input: 240 5.9% 90%;
 
         /* Ring Colour */
-        --ring: 240 5% 40%;
+        --ring: 240 5.9% 10%;
 
         /* Chart Colours */
         --chart-1: 240 5% 40%;
@@ -75,47 +78,50 @@
     }
 
     .dark {
-        /* Base Colours */
-        --background: 240 5% 10%;
-        --foreground: 210 20% 90%;
+        /* Base Colours — Zinc dark */
+        --background: 240 10% 3.9%;
+        --foreground: 0 0% 98%;
+
+        /* App Chrome Colours */
+        --chrome: 240 7% 7%;
 
         /* Neutral White */
         --neutral-white: 0 0% 95%;
 
-        /* Card Colours */
-        --card: 240 5% 10%;
-        --card-foreground: 210 20% 90%;
+        /* Card Colours — elevated above bg for visual separation */
+        --card: 240 6% 12%;
+        --card-foreground: 0 0% 98%;
 
         /* Popover Colours */
-        --popover: 240 5% 12%;
-        --popover-foreground: 210 20% 90%;
+        --popover: 240 6% 10%;
+        --popover-foreground: 0 0% 98%;
 
         /* Primary Colours */
-        --primary: 210 20% 90%;
-        --primary-foreground: 240 5% 15%;
+        --primary: 0 0% 98%;
+        --primary-foreground: 240 5.9% 10%;
 
         /* Secondary Colours */
-        --secondary: 240 5% 20%;
-        --secondary-foreground: 210 20% 90%;
+        --secondary: 240 3.7% 15.9%;
+        --secondary-foreground: 0 0% 98%;
 
         /* Muted Colours */
-        --muted: 240 5% 20%;
-        --muted-foreground: 240 5% 60%;
+        --muted: 240 3.7% 15.9%;
+        --muted-foreground: 240 5% 64.9%;
 
         /* Accent Colours */
-        --accent: 240 5% 20%;
-        --accent-foreground: 210 20% 90%;
+        --accent: 240 3.7% 15.9%;
+        --accent-foreground: 0 0% 98%;
 
         /* Destructive Colours */
         --destructive: 0 72% 55%;
         --destructive-foreground: 0 0% 98%;
 
         /* Border and Input Colours */
-        --border: 240 5% 20%;
-        --input: 240 5% 20%;
+        --border: 240 3.7% 18%;
+        --input: 240 3.7% 15.9%;
 
         /* Ring Colour */
-        --ring: 240 5% 35%;
+        --ring: 240 4.9% 83.9%;
 
         /* Chart Colours */
         --chart-1: 240 5% 40%;

@@ -27,10 +27,25 @@ export default function TasksLoading() {
         <Skeleton className="h-9 w-28 rounded-md" />
       </div>
 
+      <div className="flex flex-wrap gap-2">
+        <Skeleton className="h-10 w-56" />
+        <Skeleton className="h-10 w-36" />
+        <Skeleton className="h-10 w-36" />
+        <Skeleton className="h-10 w-28" />
+      </div>
+
       <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-        {Array.from({ length: 8 }).map((_, i) => (
+        {Array.from({ length: 12 }).map((_, i) => (
           <TaskCardSkeleton key={i} />
         ))}
+      </div>
+
+      <div className="flex items-center justify-between pt-2">
+        <Skeleton className="h-4 w-48" />
+        <div className="flex items-center gap-2">
+          <Skeleton className="h-9 w-24 rounded-md" />
+          <Skeleton className="h-9 w-20 rounded-md" />
+        </div>
       </div>
     </div>
   )

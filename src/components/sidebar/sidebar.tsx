@@ -41,6 +41,7 @@ export function Sidebar() {
 
       {/* Desktop sidebar */}
       <div
+        suppressHydrationWarning
         className={cn(
           `fixed ${SIDEBAR_CONFIG.TOP_OFFSET} left-0 ${SIDEBAR_CONFIG.HEIGHT} border-r bg-background`,
           'transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] md:flex flex-col hidden overflow-hidden',

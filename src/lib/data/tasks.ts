@@ -1,22 +1,66 @@
 import { auth } from "@/auth"
 import { db } from "@/lib/db"
-import type { TaskStatus, TaskPriority } from "@/types/task"
+import type { TaskStatus, TaskPriority, TaskListItem } from "@/types/task"
 
-export async function getTasks(filters?: { status?: TaskStatus; priority?: TaskPriority }) {
+export const TASKS_PER_PAGE = 12
+
+export type DueDateFilter = 'overdue' | 'today' | 'this_week' | 'no_due_date'
+
+export interface GetTasksFilters {
+  status?: TaskStatus
+  priority?: TaskPriority
+  search?: string
+  projectId?: string
+  dueDate?: DueDateFilter
+  page?: number
+}
+
+function buildDueDateWhere(dueDate: DueDateFilter) {
+  const now = new Date()
+  const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  const endOfDay = new Date(startOfDay.getTime() + 86400000)
+  const endOfWeek = new Date(startOfDay.getTime() + 7 * 86400000)
+
+  switch (dueDate) {
+    case 'overdue':
+      return { dueDate: { lt: now }, status: { not: 'DONE' as TaskStatus } }
+    case 'today':
+      return { dueDate: { gte: startOfDay, lt: endOfDay } }
+    case 'this_week':
+      return { dueDate: { gte: startOfDay, lt: endOfWeek } }
+    case 'no_due_date':
+      return { dueDate: null }
+  }
+}
+
+export async function getTasks(filters?: GetTasksFilters): Promise<{ tasks: TaskListItem[], total: number }> {
   const session = await auth()
-  if (!session?.user?.id) return []
+  if (!session?.user?.id) return { tasks: [], total: 0 }
 
-  return db.task.findMany({
-    where: {
-      userId: session.user.id,
-      ...(filters?.status && { status: filters.status }),
-      ...(filters?.priority && { priority: filters.priority }),
-    },
-    orderBy: { updatedAt: "desc" },
-    include: {
-      project: { select: { id: true, name: true } },
-    },
-  })
+  const page = filters?.page ?? 1
+  const skip = (page - 1) * TASKS_PER_PAGE
+
+  const where = {
+    userId: session.user.id,
+    ...(filters?.status && { status: filters.status }),
+    ...(filters?.priority && { priority: filters.priority }),
+    ...(filters?.search && { title: { contains: filters.search, mode: 'insensitive' as const } }),
+    ...(filters?.projectId && { projectId: filters.projectId }),
+    ...(filters?.dueDate && buildDueDateWhere(filters.dueDate)),
+  }
+
+  const [tasks, total] = await db.$transaction([
+    db.task.findMany({
+      where,
+      orderBy: { updatedAt: "desc" },
+      include: { project: { select: { id: true, name: true } } },
+      skip,
+      take: TASKS_PER_PAGE,
+    }),
+    db.task.count({ where }),
+  ])
+
+  return { tasks, total }
 }
 
 export async function getTasksByProject(projectId: string) {
