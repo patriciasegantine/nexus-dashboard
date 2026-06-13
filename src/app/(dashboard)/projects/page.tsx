@@ -12,7 +12,7 @@ export default async function ProjectsPage() {
       <PageHeader
         title="Projects"
         description="Manage your projects"
-        action={<NewProjectButton />}
+        action={<NewProjectButton iconOnlyOnMobile />}
       />
 
       {projects.length === 0 ? (

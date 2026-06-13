@@ -1,19 +1,27 @@
 'use client'
 
 import { useState } from "react"
-import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
+import { PageHeaderAction } from "@/components/ui/page-header"
 import { ProjectDialog } from "./project-dialog"
 
-export function NewProjectButton() {
+interface NewProjectButtonProps {
+  iconOnlyOnMobile?: boolean
+}
+
+export function NewProjectButton({ iconOnlyOnMobile = false }: NewProjectButtonProps) {
   const [open, setOpen] = useState(false)
 
   return (
     <>
-      <Button onClick={() => setOpen(true)}>
-        <Plus className="h-4 w-4 mr-2" />
+      <PageHeaderAction
+        icon={Plus}
+        iconOnlyOnMobile={iconOnlyOnMobile}
+        onClick={() => setOpen(true)}
+        aria-label="New project"
+      >
         New project
-      </Button>
+      </PageHeaderAction>
       <ProjectDialog open={open} onOpenChange={setOpen} />
     </>
   )

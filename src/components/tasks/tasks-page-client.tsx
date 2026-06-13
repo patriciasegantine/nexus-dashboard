@@ -1,20 +1,18 @@
 'use client'
 
 import { useState, useTransition } from "react"
-import { Loader2 } from "lucide-react"
+import { Loader2, Plus } from "lucide-react"
 import { TasksList } from "@/components/tasks/tasks-list"
 import { TaskDialog } from "@/components/tasks/task-dialog"
 import { TaskFilters } from "@/components/tasks/task-filters"
 import { TaskPagination } from "@/components/tasks/task-pagination"
 import { TasksEmptyState } from "@/components/tasks/tasks-empty-state"
 import { TaskDeleteDialog } from "@/components/tasks/task-delete-dialog"
-import { PageHeader } from "@/components/ui/page-header"
-import { Button } from "@/components/ui/button"
+import { PageHeader, PageHeaderAction } from "@/components/ui/page-header"
 import { duplicateTask, deleteTask } from "@/actions/tasks"
 import { toast } from "@/hooks/use-toast"
 import type { TaskListItem } from "@/types/task"
 import type { Project } from "@/types/project"
-import { Plus } from "lucide-react"
 
 interface TasksPageClientProps {
   tasks: TaskListItem[]
@@ -73,10 +71,14 @@ export function TasksPageClient({ tasks, total, projects, page, perPage, hasFilt
         title="Tasks"
         description="All your tasks across projects"
         action={
-          <Button size="sm" onClick={handleNewTask}>
-            <Plus className="h-4 w-4 mr-2" />
+          <PageHeaderAction
+            icon={Plus}
+            iconOnlyOnMobile
+            onClick={handleNewTask}
+            aria-label="New task"
+          >
             New task
-          </Button>
+          </PageHeaderAction>
         }
       />
 
